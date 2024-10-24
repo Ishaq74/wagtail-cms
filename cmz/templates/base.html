@@ -1,0 +1,407 @@
+{% load static wagtailcore_tags tailwind_tags wagtailuserbar %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>
+            {% block title %}
+            {% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}
+            {% endblock %}
+            {% block title_suffix %}
+            {% wagtail_site as current_site %}
+            {% if current_site and current_site.site_name %}| {{ current_site.site_name }}{% endif %}
+            {% endblock %}
+        </title>
+        {% if page.search_description %}
+        <meta name="description" content="{{ page.search_description }}" />
+        {% endif %}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        {# Force all links in the live preview panel to be opened in a new tab #}
+        {% if request.in_preview_panel %}
+        <base target="_blank">
+        {% endif %}
+
+        {# Global stylesheets #}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/cmz.css' %}">
+        {# tailwind_css #}
+
+        {% block extra_css %}
+        {# Override this in templates to add extra stylesheets #}
+        {% endblock %}
+    </head>
+
+    <body>
+
+        {% block header %}
+        {% include "includes/header.html" %}
+        {% endblock %}                        
+       
+        {% wagtailuserbar %}
+<main>
+    {% block content %}{% endblock %}
+<!-- 
+<section>
+    <div class="wrapper">
+        <div class="card">
+            <h1>Bienvenue sur l'annuaire des commerces du Nord de la Guadeloupe 🌴</h1>
+            <p>Explorez les meilleures adresses locales : artisans, bien-être, loisirs, immobilier, et bien plus encore. Trouvez rapidement les informations essentielles sur les commerces et services autour de vous.</p>
+            <p>Vous êtes commerçant ou artisan ? Référencez-vous gratuitement pour gagner en visibilité et attirer de nouveaux clients.</p>
+        </div>
+        <img src="https://via.placeholder.com/350" alt="Image de la Guadeloupe" />
+    </div>
+</section>
+
+
+<section>
+    <h2>Nos Recommandations ⭐</h2>
+    <div class="wrapper">
+        <div class="card">
+            <h3>🏖️ Plage Services</h3>
+            <p>Services de plage et sports nautiques. Profitez des eaux cristallines en toute sérénité. Recommandé par nos utilisateurs !</p>
+            <img src="https://via.placeholder.com/150" alt="Plage Services" />
+        </div>
+        <div class="card">
+            <h3>🍹 Bar du Lagon</h3>
+            <p>Bar à cocktails en bord de mer avec une vue imprenable. Parfait pour se détendre après une longue journée !</p>
+            <img src="https://via.placeholder.com/150" alt="Bar du Lagon" />
+        </div>
+        <div class="card">
+            <h3>🛠️ Artisan Peintre</h3>
+            <p>Rénovations et peintures à Saint-Martin. Faites appel à des professionnels pour vos projets de décoration.</p>
+            <img src="https://via.placeholder.com/150" alt="Artisan Peintre" />
+        </div>
+        <div class="card">
+            <h3>🚗 Garage Antilles</h3>
+            <p>Services automobiles pour véhicules de toutes marques. Entretien rapide et efficace à proximité !</p>
+            <img src="https://via.placeholder.com/150" alt="Garage Antilles" />
+        </div>
+        <div class="card">
+            <h3>🏠 Location Villa Guadeloupe</h3>
+            <p>Villas de luxe avec vue sur la mer dans la région de Saint-Martin. Parfait pour des vacances inoubliables.</p>
+            <img src="https://via.placeholder.com/150" alt="Location Villa Guadeloupe" />
+        </div>
+        <div class="card">
+            <h3>🍽️ Restaurant Créole</h3>
+            <p>Découvrez les saveurs authentiques de la Guadeloupe dans un cadre convivial et chaleureux.</p>
+            <img src="https://via.placeholder.com/150" alt="Restaurant Créole" />
+        </div>
+    </div>
+</section>
+
+
+<section>
+    <h2>Rechercher un commerce 🔍</h2>
+    <div class="wrapper">
+        <input type="search" placeholder="Entrez le nom du commerce ou la catégorie..." />
+        <button>Rechercher</button>
+    </div>
+</section>
+
+
+<section>
+    <h2>Résultats de la recherche 📝</h2>
+    <div class="wrapper">
+        <div class="card">
+            <h3>🌿 Bien-être & Spa</h3>
+            <p>Un moment de détente dans notre spa situé dans le Nord de la Guadeloupe.</p>
+        </div>
+        <div class="card">
+            <h3>🏡 Immobilier des Iles</h3>
+            <p>Découvrez les meilleures offres immobilières à Saint-Martin.</p>
+        </div>
+        <div class="card">
+            <h3>🍴 Restaurant Le Zouk</h3>
+            <p>Restaurant créole avec vue imprenable sur la plage.</p>
+        </div>
+        <div class="card">
+            <h3>🚗 Antilles Auto</h3>
+            <p>Location et entretien de véhicules dans toute la Guadeloupe.</p>
+        </div>
+        <div class="card">
+            <h3>🏄‍♂️ Surf Paradise</h3>
+            <p>Équipements et cours de surf pour tous niveaux à Saint-Martin.</p>
+        </div>
+        <div class="card">
+            <h3>🧘‍♂️ Yoga Serenity</h3>
+            <p>Sessions de yoga relaxant dans des lieux paradisiaques en bord de mer.</p>
+        </div>
+    </div>
+</section>
+
+
+<section>
+    <div class="wrapper">
+      <a href="#modal" class="bg-blue-500 text-white p-2 rounded-lg w-fit">Référencez votre commerce 📇</a>
+    </div>
+</section>
+
+
+<section role="dialog" aria-labelledby="modal-title" class="fixed inset-0 z-50 flex items-center justify-center modal" id="modal">
+
+    <a class="modal-overlay fixed inset-0 bg-black bg-opacity-50" href="#" tabindex="-1"></a>
+
+ 
+    <div class="modal-content bg-white p-6 rounded-lg shadow-lg max-w-lg mx-auto relative transform transition-transform duration-300 ease-in-out">
+
+        <a title="Close modal" aria-label="Close modal" href="#" class="modal-close text-gray-500 hover:text-gray-700 text-xl absolute top-4 right-4">&times;</a>
+
+
+        <h2 id="modal-title" class="text-2xl font-bold mb-4">Référencez votre commerce 📇</h2>
+        <p class="mb-4">Inscrivez votre entreprise et bénéficiez de la visibilité sur notre annuaire local ! 🌴</p>
+        
+
+        <form>
+
+            <label class="block mb-2">Nom de l'entreprise 🏢:</label>
+            <input type="text" class="border p-2 w-full mb-4" placeholder="Entrez le nom de votre entreprise" required />
+
+
+            <label class="block mb-2">Secteur d'activité 🛠️:</label>
+            <select class="border p-2 w-full mb-4" required>
+                <option value="">Sélectionnez une catégorie</option>
+                <option value="bien-etre">Bien-être 🌿</option>
+                <option value="automobile">Automobile 🚗</option>
+                <option value="loisirs">Loisirs 🎉</option>
+                <option value="immobilier">Immobilier 🏡</option>
+            </select>
+
+
+            <label class="block mb-2">Numéro de téléphone 📞:</label>
+            <input type="tel" class="border p-2 w-full mb-4" placeholder="Entrez votre numéro" required />
+
+
+            <label class="block mb-2">Email 📧:</label>
+            <input type="email" class="border p-2 w-full mb-4" placeholder="Entrez votre email" required />
+
+
+            <div class="flex justify-end space-x-4">
+                <a href="#" class="text-gray-600 hover:underline">Annuler</a>
+                <button type="submit" class="bg-green-500 text-white p-2 rounded hover:bg-green-600">Envoyer</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+
+  
+  <style>
+    /* Modal animations and transitions */
+    .modal:not(:target) {
+      visibility: hidden;
+      transition-delay: 500ms;
+      transition-property: visibility;
+    }
+    .modal:target .modal-content {
+      transform: translateY(100vh);
+      animation: 500ms ease-in-out slideUp forwards;
+    }
+    .modal:not(:target) .modal-content {
+      transform: translateY(0);
+      animation: 500ms ease-out slideDown forwards;
+    }
+    .modal:target .modal-overlay {
+      opacity: 0;
+      animation: 500ms linear fadeIn forwards;
+    }
+  
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  
+    @keyframes slideUp {
+      from {
+        transform: translateY(100vh);
+      }
+      to {
+        transform: translateY(0);
+      }
+    }
+  
+    @keyframes slideDown {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(100vh);
+      }
+    }
+  </style>
+
+
+
+
+  
+  
+</main>
+
+
+<section id="faq-1720">
+    <div class="cs-container">
+        <div class="cs-content">
+            <span class="cs-topper">Obligatoire</span>
+            <h2 class="cs-title">Mentions Légales</h2>
+        </div>
+        <div class="cs-flex-group">
+            <div class="cs-button-group">
+                <div class="cs-flex">
+                    <button class="cs-option cs-active" data-filter="one">
+                        <img class="cs-icon" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Graphics/plus.svg" alt="plus graphic" width="12" height="12">
+                        Mentions Légales
+                    </button>
+                    <button class="cs-option" data-filter="two">
+                        <img class="cs-icon" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Graphics/plus.svg" alt="plus graphic" width="12" height="12">
+                        Politique de Confidentialité
+                    </button>
+                    <button class="cs-option" data-filter="three">
+                        <img class="cs-icon" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Graphics/plus.svg" alt="plus graphic" width="12" height="12">
+                        Conditions Générales de Vente
+                    </button>
+                </div>
+                <picture class="cs-picture">
+                    <source media="(max-width: 600px)" srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/People/people2.jpg">
+                    <source media="(min-width: 601px)" srcset="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/People/people2.jpg">
+                    <img loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/People/people2.jpg" alt="people" width="353" height="493">
+                </picture>
+            </div>
+
+
+            <div id="mentions-legales" class="cs-wrapper">
+                <ul class="cs-faq-group" data-category="one">
+                    <span class="cs-title">Mentions Légales</span>
+                    <p class="cs-text">
+                        Conformément aux dispositions de la loi n° 2004-575 du 21 juin 2004 pour la confiance en l’économie numérique, nous vous informons de l’identité des différents intervenants impliqués dans la réalisation et le suivi du site.
+                    </p>
+              
+                    <li class="cs-faq-item">
+                        <button class="cs-button">
+                            <span class="cs-button-text">Identité du Site</span>
+                        </button>
+                        <p class="cs-item-p">
+                            {% if organization.nom_entreprise %} Nom de l'entreprise : <b>{{ organization.nom_entreprise }}</b> {% endif %}
+                            {% if organization.numero_siret %} Numéro de SIRET : <b>{{ organization.numero_siret }}</b> {% endif %}
+                            {% if organization.numero_tva %} Numéro de TVA : <b>{{ organization.numero_tva }}</b> {% endif %}
+                            {% if organization.capital_social %} Capital social : <b>{{ organization.capital_social }}</b> {% endif %}
+                            {% if organization.forme_juridique %} Forme juridique : <b>{{ organization.forme_juridique }}</b> {% endif %}
+                        </p>
+                    </li>
+                   
+                    <li class="cs-faq-item">
+                        <button class="cs-button">
+                            <span class="cs-button-text">Hébergement</span>
+                        </button>
+                        <p class="cs-item-p">
+                            {% if legal.hebergeur_nom %} Hébergement par <b>{{ legal.hebergeur_nom }}</b>, {% endif %}
+                            {% if legal.hebergeur_adresse_rue %} situé à {{ legal.hebergeur_adresse_rue }}, {{ legal.hebergeur_adresse_code_postal }} {{ legal.hebergeur_adresse_ville }}. {% endif %}
+                            {% if legal.hebergeur_contact %} Contact : <b>{{ legal.hebergeur_contact }}</b> {% endif %}
+                        </p>
+                    </li>
+                   
+                    <li class="cs-faq-item">
+                        <button class="cs-button">
+                            <span class="cs-button-text">Directeur de publication</span>
+                        </button>
+                        <p class="cs-item-p">
+                            {% if legal.responsable_publication %} Directeur de la publication : <b>{{ legal.responsable_publication }}</b> {% endif %}
+                        </p>
+                    </li>
+                  
+                    <li class="cs-faq-item">
+                        <button class="cs-button">
+                            <span class="cs-button-text">Nous contacter</span>
+                        </button>
+                        <p class="cs-item-p">
+                            {% if contact.telephone %} Téléphone : <b>{{ contact.telephone }}</b><br> {% endif %}
+                            {% if contact.email %} Email : <b>{{ contact.email }}</b><br> {% endif %}
+                            {% if contact.adresse_rue_contact %} Adresse : <b>{{ contact.adresse_rue_contact }}, {{ contact.adresse_code_postal_contact }} {{ contact.adresse_ville_contact }}, {{ contact.adresse_pays_contact }}</b> {% endif %}
+                        </p>
+                    </li>
+                 
+                    <li class="cs-faq-item">
+                        <button class="cs-button">
+                            <span class="cs-button-text">Données personnelles</span>
+                        </button>
+                        <p class="cs-item-p">
+                            Le traitement de vos données à caractère personnel est régi par notre Politique de Confidentialité, conformément au Règlement Général sur la Protection des Données (RGPD).
+                        </p>
+                    </li>
+                 
+                    <li class="cs-faq-item">
+                        <button class="cs-button">
+                            <span class="cs-button-text">Litiges</span>
+                        </button>
+                        <p class="cs-item-p">
+                            En cas de litige, le médiateur de la consommation est <b>{{ legal.mediation_nom }}</b>, disponible via : 
+                            <a href="{{ legal.mediation_url }}">{{ legal.mediation_url }}</a>.
+                        </p>
+                    </li>
+                </ul>
+            </div>
+
+        
+            <ul id="politique-confidentialite" class="cs-faq-group cs-hidden" data-category="two">
+                <span class="cs-title">Politique de Confidentialité</span>
+                <li class="cs-faq-item">
+                    <button class="cs-button">
+                        <span class="cs-button-text">Collecte des données personnelles</span>
+                    </button>
+                    <p class="cs-item-p">
+                        Nous collectons des données personnelles telles que le nom, l'adresse e-mail et d'autres informations pour fournir nos services.
+                    </p>
+                </li>
+                <li class="cs-faq-item">
+                    <button class="cs-button">
+                        <span class="cs-button-text">Utilisation des données</span>
+                    </button>
+                    <p class="cs-item-p">
+                        Les données collectées sont utilisées pour traiter les commandes, améliorer les services et communiquer avec vous.
+                    </p>
+                </li>
+            </ul>
+
+         
+            <ul id="cgv" class="cs-faq-group cs-hidden" data-category="three">
+                <span class="cs-title">Conditions Générales de Vente</span>
+                <li class="cs-faq-item">
+                    <button class="cs-button">
+                        <span class="cs-button-text">Prix</span>
+                    </button>
+                    <p class="cs-item-p">
+                        Les prix sont indiqués en euros toutes taxes comprises (TTC) et peuvent être modifiés à tout moment.
+                    </p>
+                </li>
+                <li class="cs-faq-item">
+                    <button class="cs-button">
+                        <span class="cs-button-text">Paiement</span>
+                    </button>
+                    <p class="cs-item-p">
+                        Le paiement est réalisé en ligne de manière sécurisée. Les commandes ne seront traitées qu'après réception du paiement.
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+Hero Section -->
+
+
+    {% block footer %}
+    {% include "includes/footer.html" %}
+    {% endblock %}  
+
+
+
+        {# Global javascript #}
+        <script type="text/javascript" src="{% static 'js/cmz.js' %}"></script>
+
+        {% block extra_js %}
+        {# Override this in templates to add extra javascript #}
+        {% endblock %}
+    </body>
+</html>

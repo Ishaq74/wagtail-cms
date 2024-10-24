@@ -1,0 +1,680 @@
+/* Import des polices */
+@import url('https://fonts.googleapis.com/css2?family=Bowlby+One+SC&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Palanquin+Dark&display=swap');
+
+/* Font Face */
+@font-face {
+    font-family: 'Bowlby SC';
+    src: url('../fonts/Bowlby_One_SC/BowlbyOneSC-Regular.ttf');
+}
+
+/* Variables globales */
+:root {
+    --primary: #4200ff;
+    --primary-light: #a8a8ff;
+    --primary-dark: #3400b0;
+
+    --secondary: #dd3825;
+    --secondary-light: #fecfca;
+    --secondary-dark: #80271c;
+
+    --accent: #dd6302;
+    --accent-light: #ffdc88;
+    --accent-dark: #7a2b0d;
+
+    --dark: rgb(0, 0, 0);
+    --light: rgb(255, 255, 255);
+    --background: rgb(255, 255, 255);
+
+    --color-white: #fff;
+    --color-black: #000;
+    --color-primary: #EBC686;
+    --color-primary-dark: #D9A75F;
+    --color-primary-light: #F5D7A4;
+    --color-secondary: #D7B375;
+    --color-secondary-dark: #B7965D;
+    --color-secondary-light: #E9C89A;
+    --color-accent: #C17C74;
+    --color-accent-dark: #A6665F;
+    --color-accent-light: #D9948D;
+    --font-title: 'Bowlby One SC', sans-serif;
+    --font-body: 'Palanquin Dark', sans-serif;
+    --gap: 1rem;
+}
+
+/* Reset de base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Styles pour l'HTML et le body */
+html, body {
+    height: 100%;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--dark);
+    font-family: var(--font-body), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 1rem;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 100%;
+}
+
+/* Typographie */
+h1, h2, h3, h4, h5, h6, p {
+    font-family: 'Bowlby SC', sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+h1 { font-size: clamp(1.5rem, 5vw, 2.5rem); }
+h2 { font-size: clamp(1.25rem, 5vw, 2.25rem); }
+h3 { font-size: clamp(1.125rem, 5vw, 2rem); }
+h4 { font-size: clamp(1rem, 5vw, 1.75rem); }
+h5 { font-size: clamp(0.875rem, 5vw, 1.5rem); }
+h6 { font-size: clamp(0.75rem, 5vw, 1.25rem); }
+
+p, a, ul, ol {
+    font-size: clamp(0.75rem, 5vw, 1rem);
+}
+
+/* Boutons */
+.btn {
+    display: inline-block;
+    width: fit-content;
+    height: fit-content;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn:focus {
+    outline: 2px solid #005fcc;
+    outline-offset: 2px;
+    box-shadow: 0 0 5px rgba(0, 0, 255, 0.5);
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: var(--light);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-secondary {
+    background-color: var(--secondary);
+    color: var(--light);
+}
+
+.btn-secondary:hover {
+    background-color: var(--secondary-dark);
+}
+
+.btn-accent {
+    background-color: var(--accent);
+    color: white;
+}
+
+.btn-accent:hover {
+    background-color: var(--accent-dark);
+}
+
+/* Liens */
+a {
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+a:focus {
+    outline: 2px solid #005fcc;
+    outline-offset: 2px;
+    box-shadow: 0 0 5px rgba(0, 0, 255, 0.5);
+}
+
+a:not([class]) {
+    color: var(--primary);
+    text-decoration: underline;
+    font-weight: normal;
+}
+
+a:not([class]):focus {
+    outline: 2px solid #005fcc;
+    outline-offset: 2px;
+}
+
+/* Liens personnalisés */
+.link {
+    color: var(--primary);
+}
+
+.link:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+.link1 {
+    color: var(--dark);
+    font-weight: bold;
+}
+
+.link1:hover {
+    text-underline-offset: 4px;
+    text-decoration-color: orange;
+    text-decoration-thickness: 2px;
+    text-decoration-style: wavy;
+}
+
+.link2 {
+    color: var(--accent);
+}
+
+.link2:hover {
+    color: var(--accent-dark);
+    text-decoration: underline;
+}
+
+.link3 {
+    color: var(--dark);
+    font-weight: bold;
+}
+
+.link3:hover {
+    color: var(--light);
+    background-color: var(--dark);
+    padding: 2px 4px;
+    text-decoration: underline;
+}
+
+.link:focus, .link1:focus, .link2:focus, .link3:focus {
+    outline: 2px solid var(--accent-dark);
+    outline-offset: 2px;
+    box-shadow: 0 0 5px var(--accent-dark);
+}
+
+/* Listes de navigation */
+ul.navigation {
+    list-style: none;
+    padding-left: 0;
+}
+
+ul.navigation li a {
+    color: var(--light);
+    font-weight: bold;
+}
+
+ul.navigation li a:focus {
+    outline: 2px solid var(--light);
+    outline-offset: 3px;
+    box-shadow: 0 0 5px rgba(0, 0, 255, 0.5);
+}
+
+/* Images */
+img {
+    height: auto;
+    display: block;
+    object-fit: cover;
+    border-radius: 8px;
+    width: 100%;
+}
+
+/* Sections */
+section {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 40px;
+    border: dashed 4px purple;
+}
+
+/* Wrappers */
+.wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--set, 300px), 1fr));
+    justify-content: center;
+    align-items: stretch;
+    gap: var(--gap, 1rem);
+    overflow: auto;
+    border: dashed 4px green;
+}
+
+/* Cartes */
+.card {
+    background-color: rgb(250, 244, 244);
+    border: 4px dashed blue;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    display: grid;
+    gap: 1rem;
+}
+
+/* Formulaires */
+form {
+    background-color: var(--secondary);
+    border: 1px solid var(--primary);
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+input[type="number"],
+input[type="color"],
+select {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid var(--dark);
+    border-radius: 4px;
+}
+
+input[type="submit"],
+input[type="reset"] {
+    background-color: var(--primary);
+    color: var(--light);
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover,
+input[type="reset"]:hover {
+    background-color: var(--primary-dark);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Classes pour les couleurs de texte */
+.text-primary {
+    color: var(--primary);
+}
+
+.text-primary-light {
+    color: var(--primary-light);
+}
+
+.text-primary-dark {
+    color: var(--primary-dark);
+}
+
+.text-secondary {
+    color: var(--secondary);
+}
+
+.text-secondary-light {
+    color: var(--secondary-light);
+}
+
+.text-secondary-dark {
+    color: var(--secondary-dark);
+}
+
+.text-accent {
+    color: var(--accent);
+}
+
+.text-accent-light {
+    color: var(--accent-light);
+}
+
+.text-accent-dark {
+    color: var(--accent-dark);
+}
+
+.text-dark {
+    color: var(--dark);
+}
+
+.text-light {
+    color: var(--light);
+}
+
+/* Classes pour l'espacement des paragraphes */
+.spacing-normal {
+    margin-bottom: 1rem;
+}
+
+.spacing-large {
+    margin-bottom: 2rem;
+}
+
+
+/* Image Block */
+
+/* Alignement des images */
+.text-left img {
+    display: block;
+    margin-left: 0;
+    margin-right: auto;
+}
+
+.text-center img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.text-right img {
+    display: block;
+    margin-left: auto;
+    margin-right: 0;
+}
+
+/* Tailles d'image */
+.image-small img {
+    width: 150px;
+}
+
+.image-medium img {
+    width: 300px;
+}
+
+.image-large img {
+    width: 500px;
+}
+
+/* Btn Group */
+
+.btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem; /* Espace entre les boutons */
+}
+
+.btn-group > a {
+    flex: 1 1 auto; /* Les boutons peuvent se redimensionner pour remplir l'espace */
+}
+
+
+/* Style pour le carrousel "photography" */
+.gallery-photography {
+    --d: 10s;
+    /* durée de l'animation */
+    display: grid;
+    width: 250px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-block: 2rem;
+    align-items: center;
+  }
+  
+  .gallery-photography > figure {
+    grid-area: 1/1;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border: 10px solid #f2f2f2;
+    box-shadow: 0 0 4px #0007;
+    z-index: 2;
+    animation: slide var(--d) infinite, z-order var(--d) infinite steps(1);
+  }
+  
+  .gallery-photography figure:last-child {
+    animation-name: slide, z-order-last;
+  }
+  
+  .gallery-photography > figure:nth-child(1) {
+    animation-delay: calc(0*var(--d));
+    --r: 7deg;
+  }
+  
+  .gallery-photography > figure:nth-child(2) {
+    animation-delay: calc(-0.2*var(--d));
+    --r: 6deg;
+  }
+  
+  .gallery-photography > figure:nth-child(3) {
+    animation-delay: calc(-0.4*var(--d));
+    --r: 18deg;
+  }
+  
+  .gallery-photography > figure:nth-child(4) {
+    animation-delay: calc(-0.6*var(--d));
+    --r: 10deg;
+  }
+  
+  .gallery-photography > img:nth-child(5) {
+    animation-delay: calc(-0.8*var(--d));
+    --r: -5deg;
+  }
+  
+  @keyframes slide {
+    10% {
+      transform: translateX(120%) rotate(var(--r));
+    }
+    0%, 100%, 20% {
+      transform: translateX(0%) rotate(var(--r));
+    }
+  }
+  
+  @keyframes z-order {
+    10%, 20% {
+      z-index: 1;
+    }
+    80% {
+      z-index: 2;
+    }
+  }
+  
+  @keyframes z-order-last {
+    10%, 20% {
+      z-index: 1;
+    }
+    90% {
+      z-index: 2;
+    }
+  }
+  
+
+
+/* Header */
+header {
+    max-height: 80px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--primary);
+}
+
+.logo-text {
+    color: white;
+    cursor: pointer;
+}
+
+/* Navigation */
+.navigation {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navigation a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    font-weight: bold;
+}
+
+.navigation a:hover {
+    background-color: var(--primary-dark);
+    border-radius: 5px;
+}
+
+.navigation li ul {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: none;
+    flex-direction: column;
+    background-color: var(--primary);
+    list-style: none;
+    min-width: 150px;
+}
+
+.navigation li:hover ul {
+    display: flex;
+}
+
+.navigation li ul li a {
+    padding: 10px 15px;
+}
+
+.navigation li ul li a:hover {
+    background-color: var(--primary-dark);
+}
+
+/* Media queries */
+@media screen and (max-width: 600px) {
+
+    .image-large img {
+        width: 100%;
+    }
+
+    header {
+        display: block;
+    }
+
+    .navigation {
+        flex-direction: column;
+        align-items: center;
+        height: 0;
+        overflow: hidden;
+        transition: all 0.5s ease-in-out;
+    }
+
+    .logo {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .hamburger-icon {
+        display: block;
+        border: none;
+        background-color: transparent;
+    }
+
+    .hamburger-icon .fa-bars, .hamburger-icon .fa-x {
+        color: white;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+
+    header:has(.hamburger-icon input[type="checkbox"]:checked) .navigation {
+        height: auto;
+        margin-top: 1rem;
+    }
+
+    .navigation li ul {
+        position: static;
+    }
+}
+
+/* Grilles */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: var(--gap);
+    border: dashed 4px green;
+}
+
+@media (min-width: 768px) {
+    .grid-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1280px) {
+    .grid-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+
+/* Container for pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0;
+  gap: 0.5rem;
+}
+
+/* Style for pagination items */
+.page-item {
+  display: inline-block;
+}
+
+/* Links in the pagination */
+.page-link {
+  color: var(--primary);
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Hover effect for pagination links */
+.page-link:hover {
+  background-color: var(--primary);
+  color: var(--light);
+}
+
+/* Active page */
+.page-item.active span {
+  background-color: var(--primary-dark);
+  color: var(--light);
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+}
+
+/* Disabled state for the previous/next buttons */
+.page-item.disabled span {
+  color: var(--color-secondary-light);
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  cursor: not-allowed;
+}
+
+/* Style for page arrows */
+.page-link[aria-label="Previous"],
+.page-link[aria-label="Next"] {
+  font-weight: bold;
+}

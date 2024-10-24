@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+
+<!-- Bannière pour la page Blog Category -->
+{% with banner_title=page.title banner_summary=page.summary banner_image=page.featured_image banner_alt=page.title %}
+    {% include 'includes/banner_page.html' %}
+{% endwith %}
+
+<section>
+    <h2>Catégories d'entreprises locales</h2>
+    <div class="grid grid-3">
+        {% for category in categories %}
+        <article class="card">
+            {% if category.specific.featured_image %}
+            {% image category.specific.featured_image fill-300x200 as rendition %}
+            <img src="{{ rendition.url }}" alt="{{ category.title }}">
+            {% else %}
+            <img src="https://via.placeholder.com/300x200?text=No+Image" alt="{{ category.title }}">
+            {% endif %}
+            <div class="card-content">
+                <h3>{{ category.title }}</h3>
+                <p>{{ category.specific.summary }}</p>
+                <a href="{{ category.url }}" class="btn btn-primary">Voir la catégorie</a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+
+    {% if pagination.has_previous or pagination.has_next %}
+    <!-- Pagination -->
+    <div class="pagination">
+        {% if pagination.has_previous %}
+        <a href="?page={{ pagination.previous_page_number }}" class="btn">Précédent</a>
+        {% endif %}
+
+        {% if pagination.has_next %}
+        <a href="?page={{ pagination.next_page_number }}" class="btn">Suivant</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</section>
+
+<!-- Section pour les entreprises "mis en avant" -->
+<section>
+    <h2>Entreprises mises en avant</h2>
+    <div class="grid grid-3">
+        {% for business in featured_businesses %}
+        <article class="card">
+            {% if business.featured_image %}
+            {% image business.featured_image fill-300x200 as rendition %}
+            <img src="{{ rendition.url }}" alt="{{ business.title }}">
+            {% else %}
+            <img src="https://via.placeholder.com/300x200?text=No+Image" alt="{{ business.title }}">
+            {% endif %}
+            <div class="card-content">
+                <h3>{{ business.title }}</h3>
+                <p>{{ business.address }}</p>
+                <a href="{{ business.url }}" class="btn btn-primary">Voir l'entreprise</a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+<section>
+    {{ page.body|richtext }}
+</section>
+{% endblock %}

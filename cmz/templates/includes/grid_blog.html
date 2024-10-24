@@ -1,0 +1,30 @@
+{% load static wagtailimages_tags %}
+
+<section>
+    <div class="grid grid-3">
+        {% for item in items %}
+        <article class="card">
+            <!-- Gestion de l'image -->
+            {% if item.specific.featured_image %}
+            {% image item.specific.featured_image fill-300x200 as rendition %}
+            <img src="{{ rendition.url }}" alt="{{ item.alt|default:item.title }}">
+            {% else %}
+            <img src="https://via.placeholder.com/300x200?text=No+Image" alt="{{ item.alt|default:item.title }}">
+            {% endif %}
+
+            <!-- Contenu de la carte -->
+            <div class="card-content">
+                <h3 class="card-title">{{ item.title }}</h3>
+                <p class="card-summary">{{ item.specific.summary }}</p>
+
+                {% if item.specific.date %}
+                <p class="card-date">Publié le : {{ item.specific.date }}</p>
+                {% endif %}
+
+                <a href="{{ item.url }}" class="btn btn-primary">{{ item.button_text|default:"Lire plus" }}</a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+

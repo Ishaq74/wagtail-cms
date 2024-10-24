@@ -1,0 +1,52 @@
+{% load navbar_tags %}
+{% get_navbar_pages as navbar_pages %}
+
+<footer class="bg-indigo-950 text-white py-8">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="col-span-2">
+                <h6 class="text-white text-lg uppercase tracking-widest mb-4">À propos</h6>
+                <p class="text-justify">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+            </div>
+
+            <div>
+                <h6 class="text-white text-lg uppercase tracking-widest mb-4">Categories</h6>
+                <ul class="space-y-2">
+                    <li><a href="http://scanfcode.com/category/c-language/" class="hover:text-blue-500">C</a></li>
+                    <li><a href="http://scanfcode.com/category/front-end-development/" class="hover:text-blue-500">UI Design</a></li>
+                    <li><a href="http://scanfcode.com/category/back-end-development/" class="hover:text-blue-500">PHP</a></li>
+                    <li><a href="http://scanfcode.com/category/java-programming-language/" class="hover:text-blue-500">Java</a></li>
+                    <li><a href="http://scanfcode.com/category/android/" class="hover:text-blue-500">Android</a></li>
+                    <li><a href="http://scanfcode.com/category/templates/" class="hover:text-blue-500">Templates</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h6 class="text-white text-lg uppercase tracking-widest mb-4">Plan du Site</h6>
+                <ul class="space-y-2">
+                    {% for navbar_page in navbar_pages %}
+                    <li><a href="{{ navbar_page.get_url }}" class="hover:text-blue-500">{{ navbar_page.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <hr class="border-gray-600 my-4 opacity-50">
+
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <p class="text-sm text-gray-400">
+                Copyright &copy; {% now "Y" %} Fait avec ❤️
+                <a href="https://zatchouli.fr" class="hover:text-blue-500">Zatchouli</a>.
+            </p>
+
+            <ul class="flex space-x-4 mt-4 md:mt-0">
+                <li><a href="#" class="w-10 h-10 bg-gray-700 hover:bg-blue-500 text-white rounded-full flex items-center justify-center"><i class="fa fa-facebook"></i></a></li>
+                <li><a href="#" class="w-10 h-10 bg-gray-700 hover:bg-blue-500 text-white rounded-full flex items-center justify-center"><i class="fa fa-twitter"></i></a></li>
+                <li><a href="#" class="w-10 h-10 bg-gray-700 hover:bg-blue-500 text-white rounded-full flex items-center justify-center"><i class="fa fa-dribbble"></i></a></li>
+                <li><a href="#" class="w-10 h-10 bg-gray-700 hover:bg-blue-500 text-white rounded-full flex items-center justify-center"><i class="fa fa-linkedin"></i></a></li>
+            </ul>
+        </div>
+    </div>
+</footer>

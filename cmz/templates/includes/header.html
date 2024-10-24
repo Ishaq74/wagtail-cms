@@ -1,0 +1,35 @@
+{% load navbar_tags %}
+
+{% get_navbar_pages as navbar_pages %}
+
+<header>
+    <div class="logo">
+      <h1 class="logo-text">Nom de votre Site</h1>
+      <button class="hamburger-icon">
+        <label for="dropdown">
+          <i class="fa-solid fa-bars"></i>
+          <i class="fa-solid fa-x"></i>
+        </label>
+        <input type="checkbox" id="dropdown" />
+      </button>
+    </div>
+    <ul class="navigation">
+        <!-- Afficher la page d'accueil et les pages flex -->
+        {% for page in navbar_pages.home_and_flex_pages %}
+        <li><a class="link link1" href="{{ page.url }}">{{ page.title }}</a></li>
+        {% endfor %}
+
+        <!-- Afficher le BlogIndexPage -->
+        {% if navbar_pages.blog_index %}
+        <li>
+            <a class="link link1" href="{{ navbar_pages.blog_index.url }}">{{ navbar_pages.blog_index.title }}</a>
+            <ul>
+                <!-- Sous-menu des catégories (2 niveaux max) -->
+                {% for category in navbar_pages.blog_categories %}
+                <li><a class="link link1" href="{{ category.url }}">{{ category.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% endif %}
+    </ul>
+</header>

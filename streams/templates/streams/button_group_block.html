@@ -1,0 +1,27 @@
+{% if self|length > 1 %}
+    <div class="btn-group">
+        {% for button in self %}
+            {% if button.link %}
+                <a href="{{ button.link.url }}" class="btn {{ button.style }}">
+                    {{ button.text }}
+                </a>
+            {% elif button.url %}
+                <a href="{{ button.url }}" class="btn {{ button.style }}" target="_blank">
+                    {{ button.text }}
+                </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% else %}
+    {% for button in self %}
+        {% if button.link %}
+            <a href="{{ button.link.url }}" class="btn {{ button.style }}">
+                {{ button.text }}
+            </a>
+        {% elif button.url %}
+            <a href="{{ button.url }}" class="btn {{ button.style }}" target="_blank">
+                {{ button.text }}
+            </a>
+        {% endif %}
+    {% endfor %}
+{% endif %}

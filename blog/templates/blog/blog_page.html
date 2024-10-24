@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+    <!-- Bannière pour l'article -->
+    {% with banner_title=page.title banner_date=page.date banner_summary=page.summary banner_image=page.featured_image banner_alt=page.title %}
+        {% include 'includes/banner_page.html' %}
+    {% endwith %}
+
+    <section>
+        <div>
+            {{ page.body|richtext }}
+        </div>
+        <p><a href="{{ page.get_parent.url }}">Revenir à la catégorie</a></p>
+    </section>
+
+    <!-- Section des articles liés (siblings) -->
+    {% if related_articles %}
+    <section>
+        <h2>Articles connexes</h2>
+        <div class="grid grid-3">
+            {% for related in related_articles %}
+            <article class="card">
+                <!-- Image de l'article connexe -->
+                {% if related.specific.featured_image %}
+                    {% image related.specific.featured_image fill-300x200 as rendition %}
+                    <img src="{{ rendition.url }}" alt="{{ related.title }}">
+                {% else %}
+                    <img src="https://via.placeholder.com/300x200?text=No+Image" alt="{{ related.title }}">
+                {% endif %}
+                
+                <!-- Titre et résumé de l'article connexe -->
+                <div class="card-content">
+                    <h3>{{ related.title }}</h3>
+                    <p>{{ related.specific.summary }}</p>
+                    <a href="{{ related.url }}" class="btn btn-primary">Lire plus</a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+{% endblock content %}

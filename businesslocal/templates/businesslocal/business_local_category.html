@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+<section>
+    <h1>{{ page.title }}</h1>
+    <p>{{ page.summary }}</p>
+</section>
+
+<section>
+    <h2>Entreprises locales</h2>
+    <div class="grid grid-3">
+        {% for business in businesses %}
+        <article class="card">
+            {% if business.specific.featured_image %}
+            {% image business.specific.featured_image fill-300x200 as rendition %}
+            <img src="{{ rendition.url }}" alt="{{ business.title }}">
+            {% else %}
+            <img src="https://via.placeholder.com/300x200?text=No+Image" alt="{{ business.title }}">
+            {% endif %}
+            <div class="card-content">
+                <h3>{{ business.title }}</h3>
+                <p>{{ business.specific.body|truncatewords:30 }}</p>
+                <a href="{{ business.url }}" class="btn btn-primary">Voir l'entreprise</a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        {% if pagination.has_previous %}
+        <a href="?page={{ pagination.previous_page_number }}" class="btn">Précédent</a>
+        {% endif %}
+
+        <span>Page {{ pagination.number }} de {{ pagination.paginator.num_pages }}</span>
+
+        {% if pagination.has_next %}
+        <a href="?page={{ pagination.next_page_number }}" class="btn">Suivant</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

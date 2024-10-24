@@ -1,0 +1,10 @@
+{% load wagtailimages_tags %}
+
+<div class="gallery gallery-{{ self.style }}">
+    {% for item in self.images %}
+        <figure>
+            {% image item.image original as img %}
+                <img src="{{ img.url }}" alt="{{ item.alt_text }}">
+        </figure>
+    {% endfor %}
+</div>

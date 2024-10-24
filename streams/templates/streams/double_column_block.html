@@ -1,0 +1,19 @@
+{% load wagtailcore_tags %}
+
+<section>
+    {% if self.rich_text %}
+            {{ self.rich_text|richtext }}
+    {% endif %}
+    <div class="grid grid-2">
+        <div class="card">
+            {% for block in self.left_column %}
+                {{ block }}
+            {% endfor %}
+        </div>
+        <div class="card">
+            {% for block in self.right_column %}
+                {{ block }}
+            {% endfor %}
+        </div>
+    </div>
+</section>

@@ -1,0 +1,15 @@
+{% load wagtailcore_tags %}
+
+<section class="grid-section">
+    <div class="wrapper" style="--set: {{ self.min_card_width }}">
+        {% for card in self.cards %}
+            <div class="card">
+                <h3>{{ card.heading.text }}</h3>
+                <p>{{ card.text|richtext }}</p>
+                {% if card.image %}
+                    <img src="{{ card.image.url }}" alt="{{ card.image.alt_text }}">
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</section>

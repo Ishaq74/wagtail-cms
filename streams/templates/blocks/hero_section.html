@@ -1,0 +1,19 @@
+{% load wagtailcore_tags %}
+
+<section class="hero-section {{ block.value.image_position }}">
+    <div class="wrapper">
+        {% if block.value.image_position == 'left' %}
+        <div class="hero-image">
+            <img src="{{ block.value.image.url }}" alt="{{ block.value.image.alt_text }}">
+        </div>
+        {% endif %}
+        <div class="hero-content">
+            {% include_block block.value.content %}
+        </div>
+        {% if block.value.image_position == 'right' %}
+        <div class="hero-image">
+            <img src="{{ block.value.image.url }}" alt="{{ block.value.image.alt_text }}">
+        </div>
+        {% endif %}
+    </div>
+</section>

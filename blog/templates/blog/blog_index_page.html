@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+    <!-- Bannière pour la page Blog Index -->
+    {% with banner_title=page.title banner_summary=page.summary banner_image=page.featured_image banner_alt=page.title %}
+        {% include 'includes/banner_page.html' %}
+    {% endwith %}
+
+    <!-- Affichage des catégories de blog -->
+    {% if blogcategories %}
+    <section>
+        <h2>{{ page.subtitle }}</h2>
+        <div class="grid grid-3">
+            {% for category in blogcategories %}
+            <article class="card">
+                <!-- Image de la catégorie -->
+                {% if category.specific.featured_image %}
+                    {% image category.specific.featured_image fill-300x200 as rendition %}
+                    <img src="{{ rendition.url }}" alt="{{ category.title }}">
+                {% else %}
+                    <img src="https://via.placeholder.com/300x200?text=No+Image" alt="{{ category.title }}">
+                {% endif %}
+                
+                <!-- Titre et résumé de la catégorie -->
+                <div class="card-content">
+                    <h3>{{ category.title }}</h3>
+                    <p>{{ category.specific.summary }}</p>
+                    <a href="{{ category.url }}" class="btn btn-primary">Voir les articles</a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if pagination.has_other_pages %}
+        <nav aria-label="Pagination">
+            <ul class="pagination">
+                {% if pagination.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ pagination.previous_page_number }}" aria-label="Previous">
+                            &laquo;
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span>&laquo;</span></li>
+                {% endif %}
+        
+                {% for num in pagination.paginator.page_range %}
+                    {% if pagination.number == num %}
+                        <li class="page-item active"><span>{{ num }}</span></li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+        
+                {% if pagination.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ pagination.next_page_number }}" aria-label="Next">
+                            &raquo;
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span>&raquo;</span></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    <section>
+        {{ page.body|richtext }}
+    </section>
+{% endblock content %}
