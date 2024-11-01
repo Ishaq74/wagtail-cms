@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+
+{% with banner_title=page.title banner_summary=page.summary banner_image=page.featured_image banner_alt=page.title %}
+    {% include 'includes/banner_page.html' %}
+{% endwith %}
+
+<section class="product-category">
+    <div class="grid grid-2">
+        <div>
+            <h1>{{ page.title }}</h1>
+            <div class="category-summary">
+                {{ page.summary|richtext }}
+            </div>
+            <div class="category-content">
+                {{ page.content|richtext }}
+            </div>
+            {% if page.body %}
+                {% for block in page.body %}
+                    {% include_block block %}
+                {% endfor %}
+            {% endif %}
+        </div>
+        {% if page.featured_image %}
+            <div>
+                {% image page.featured_image fill-800x600 as img %}
+                <img src="{{ img.url }}" alt="{{ page.title }}">
+            </div>
+        {% endif %}
+    </div>
+
+    {% if page.get_children.live %}
+        <h2>Produits dans cette catégorie :</h2>
+        <div class="grid grid-3">
+            {% for product in page.get_children.live.specific %}
+                <div class="card">
+                    <a href="{{ product.url }}">
+                        {% if product.featured_image %}
+                            {% image product.featured_image fill-300x200 as product_img %}
+                            <img src="{{ product_img.url }}" alt="{{ product.title }}">
+                        {% endif %}
+                        <h3>{{ product.title }}</h3>
+                    </a>
+                    <p>{{ product.summary|richtext }}</p>
+                    <a href="{{ product.url }}" class="btn btn-primary">Voir le produit</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
+
+{% endblock %}

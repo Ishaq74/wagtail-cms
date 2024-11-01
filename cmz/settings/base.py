@@ -32,6 +32,9 @@ INSTALLED_APPS = [
     "blog",
     "businesslocal",
     "service",
+    "product",
+    "cart",
+    "checkout",
     "wagtail_ai",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
@@ -222,3 +225,26 @@ WAGTAIL_AI = {
 }
 
 # WAGTAILIMAGES_IMAGE_FORM_BASE = "wagtail_ai.forms.DescribeImageForm"
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',  # Changez cela pour 'INFO' en production
+    },
+    'loggers': {
+        'cart': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

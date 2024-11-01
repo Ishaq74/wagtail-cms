@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Passer à la caisse</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <div>
+        <label for="delivery_option">Option de livraison</label>
+        <select name="delivery_option" id="delivery_option" required onchange="toggleAddressField()">
+            {% if settings_instance.enable_delivery %}
+                <option value="delivery">Livraison</option>
+            {% endif %}
+            {% if settings_instance.enable_pickup %}
+                <option value="pickup">Emport</option>
+            {% endif %}
+        </select>
+    </div>
+
+    <div id="address_field">
+        <label for="address">Adresse</label>
+        <input type="text" name="address" id="address">
+    </div>
+
+    <div>
+        <label for="phone_number">Numéro de téléphone</label>
+        <input type="text" name="phone_number" required>
+    </div>
+    <div>
+        <label for="email">Email</label>
+        <input type="email" name="email" value="{{ user.email }}" required>
+    </div>
+
+    <div>
+        <label for="payment_method">Méthode de paiement</label>
+        <select name="payment_method" required>
+            {% if settings_instance.enable_cod %}
+                <option value="COD">Paiement à la livraison</option>
+            {% endif %}
+            {% if settings_instance.enable_stripe %}
+                <option value="Stripe">Carte bancaire</option>
+            {% endif %}
+        </select>
+    </div>
+
+    <button type="submit">Confirmer la commande</button>
+</form>
+
+{% if error_message %}
+    <div class="error">{{ error_message }}</div>
+{% endif %}
+
+<script>
+    function toggleAddressField() {
+        var deliveryOption = document.getElementById('delivery_option').value;
+        var addressField = document.getElementById('address_field');
+        addressField.style.display = (deliveryOption === 'pickup') ? 'none' : 'block';
+    }
+    // Initialisation au chargement de la page
+    window.onload = toggleAddressField;
+</script>
+
+{% endblock %}

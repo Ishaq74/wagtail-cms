@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Confirmation de Commande</h1>
+<p>Votre commande a été passée avec succès.</p>
+
+<p>Merci pour votre achat, {{ order.user.username }} !</p>
+<p>Numéro de Commande : {{ order.id }}</p>
+<p>Total : {{ order.total_amount }} {{ settings_instance.currency }}</p>
+
+{% if order.delivery_option == "delivery" %}
+    <p>Adresse de Livraison : {{ order.delivery_address }}</p>
+{% endif %}
+<p>Statut : {{ order.get_status_display }}</p>
+
+{% if email_status %}
+    {% if email_status.success %}
+        <p>Un email de confirmation a été envoyé à {{ order.email }}.</p>
+    {% else %}
+        <p>Erreur lors de l'envoi de l'email : {{ email_status.message }}</p>
+    {% endif %}
+{% else %}
+    <div id="email-status-message"></div>
+{% endif %}
+
+{% endblock %}
+
+<!-- JavaScript pour gérer le cas où email_status est dans le localStorage -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var emailStatus = localStorage.getItem('email_status');
+        if (emailStatus) {
+            emailStatus = JSON.parse(emailStatus);
+            var messageDiv = document.getElementById('email-status-message');
+            if (emailStatus.success) {
+                messageDiv.innerHTML = '<p>Un email de confirmation a été envoyé à {{ order.email }}.</p>';
+            } else {
+                messageDiv.innerHTML = '<p>Erreur lors de l\'envoi de l\'email : ' + emailStatus.message + '</p>';
+            }
+            // Supprimer l'email_status du localStorage
+            localStorage.removeItem('email_status');
+        }
+    });
+</script>

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Paiement</h1>
+<form id="payment-form">
+    <div id="card-element"><!-- Stripe.js injectera l'élément de carte ici --></div>
+    <button id="submit">Payer</button>
+    <div id="payment-result"></div>
+</form>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    var stripe = Stripe('{{ settings_instance.stripe_publishable_key }}');  // Clé publique Stripe
+    var elements = stripe.elements();
+    var card = elements.create('card');
+    card.mount('#card-element');
+
+    var clientSecret = '{{ client_secret }}';
+
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function(ev) {
+        ev.preventDefault();
+        stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+                card: card,
+                billing_details: {
+                    email: '{{ order.email }}'
+                }
+            }
+        }).then(function(result) {
+            if (result.error) {
+                // Afficher l'erreur au client
+                document.getElementById('payment-result').textContent = result.error.message;
+            } else {
+                if (result.paymentIntent.status === 'succeeded') {
+                    // Appeler la vue Django pour mettre à jour le statut de la commande
+                    fetch("{% url 'checkout:update_order_status' order.id %}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            'status': 'paid'
+                        })
+                    }).then(function(response) {
+                        return response.json();
+                    }).then(function(data) {
+                        if (data.success) {
+                            // Stocker email_status dans le localStorage
+                            if (data.email_status) {
+                                localStorage.setItem('email_status', JSON.stringify(data.email_status));
+                            }
+                            // Rediriger vers la page de confirmation de commande
+                            window.location.href = "{% url 'checkout:order_confirmation' order.id %}";
+                        } else {
+                            document.getElementById('payment-result').textContent = 'Erreur lors de la mise à jour de la commande.';
+                        }
+                    });
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

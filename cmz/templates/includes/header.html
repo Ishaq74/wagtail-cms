@@ -1,35 +1,268 @@
-{% load navbar_tags %}
+{# templates/includes/navbar.html #}
 
+{% load wagtailcore_tags %}
+{% load navbar_tags %}
 {% get_navbar_pages as navbar_pages %}
 
 <header>
     <div class="logo">
-      <h1 class="logo-text">Nom de votre Site</h1>
-      <button class="hamburger-icon">
-        <label for="dropdown">
-          <i class="fa-solid fa-bars"></i>
-          <i class="fa-solid fa-x"></i>
+        <a class="logo-text" href="{% pageurl navbar_pages.home_and_flex_pages.0 %}">DevDevDev</a>
+        <label for="nav-toggle" class="hamburger-icon">
+            <i class="fa-solid fa-bars"></i>
         </label>
-        <input type="checkbox" id="dropdown" />
-      </button>
+        <input type="checkbox" id="nav-toggle" />
     </div>
-    <ul class="navigation">
-        <!-- Afficher la page d'accueil et les pages flex -->
-        {% for page in navbar_pages.home_and_flex_pages %}
-        <li><a class="link link1" href="{{ page.url }}">{{ page.title }}</a></li>
-        {% endfor %}
+    <nav class="navigation">
+        <ul>
+            <!-- Afficher la page d'accueil et les pages flex -->
+            {% for page in navbar_pages.home_and_flex_pages %}
+                <li><a class="link link1" href="{{ page.url }}">{{ page.title }}</a></li>
+            {% endfor %}
 
-        <!-- Afficher le BlogIndexPage -->
-        {% if navbar_pages.blog_index %}
-        <li>
-            <a class="link link1" href="{{ navbar_pages.blog_index.url }}">{{ navbar_pages.blog_index.title }}</a>
-            <ul>
-                <!-- Sous-menu des catégories (2 niveaux max) -->
-                {% for category in navbar_pages.blog_categories %}
-                <li><a class="link link1" href="{{ category.url }}">{{ category.title }}</a></li>
-                {% endfor %}
-            </ul>
-        </li>
-        {% endif %}
-    </ul>
+            <!-- Afficher le BlogIndexPage avec ses catégories -->
+            {% if navbar_pages.blog_index %}
+                <li class="dropdown">
+                    <a class="link link1" href="{{ navbar_pages.blog_index.url }}">{{ navbar_pages.blog_index.title }}</a>
+                    {% if navbar_pages.blog_categories %}
+                        <ul class="dropdown-menu">
+                            <!-- Sous-menu des catégories (2 niveaux max) -->
+                            {% for category in navbar_pages.blog_categories %}
+                                <li>
+                                    <a class="link link1" href="{{ category.url }}">{{ category.title }}</a>
+                                    {% if category.get_children.live.public.in_menu.exists %}
+                                        <ul class="dropdown-submenu">
+                                            {% for subcategory in category.get_children.live.public.in_menu %}
+                                                <li><a class="link link1" href="{{ subcategory.url }}">{{ subcategory.title }}</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+            {% endif %}
+
+            <!-- Lien vers Services avec les catégories de services -->
+            <li class="dropdown">
+                <a class="link link1" href="#">Services</a>
+                {% if navbar_pages.service_categories %}
+                    <ul class="dropdown-menu">
+                        {% for category in navbar_pages.service_categories %}
+                            <li><a class="link link1" href="{{ category.url }}">{{ category.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </li>
+
+            <!-- Lien vers Boutique avec les catégories de produits -->
+            <li class="dropdown">
+                <a class="link link1" href="#">Boutique</a>
+                {% if navbar_pages.product_categories %}
+                    <ul class="dropdown-menu">
+                        {% for category in navbar_pages.product_categories %}
+                            <li><a class="link link1" href="{{ category.url }}">{{ category.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </li>
+
+            <!-- Icône du Panier -->
+            <li class="cart-icon">
+                <a href="http://localhost:8000/cart/" id="cart-button" aria-haspopup="dialog" aria-expanded="false">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count">0</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </header>
+
+
+
+
+<style>
+
+  .logo-text {
+    color: var(--accent-light);
+    font-family: var(--font-title);
+    font-size: clamp(1.125rem, 5vw, 2rem);
+  }
+  /* Styles de base pour la navigation */
+  .navigation {
+    position: relative;
+  }
+  
+  .navigation ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+  
+  .navigation li {
+    position: relative;
+  }
+  
+  .navigation a {
+    display: block;
+    padding: 1rem;
+    text-decoration: none;
+    color: var(--accent-light);
+  }
+
+  .navigation a:hover {
+    color: var(--light);
+  }
+  
+  .hamburger-icon {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  
+  /* Dropdown */
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: var(--secondary);
+    min-width: 200px;
+    z-index: 1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 99;
+  }
+  
+  .dropdown:hover > .dropdown-menu {
+    display: block;
+  }
+  
+  .dropdown-menu li {
+    position: relative;
+  }
+  
+  .dropdown-menu a {
+    padding: 0.5rem 1rem;
+  }
+  
+  .submenu .dropdown-menu {
+    left: 100%;
+    top: 0;
+  }
+  
+  .submenu:hover > .dropdown-menu {
+    display: block;
+  }
+  
+  /* Empêcher les menus déroulants de sortir de l'écran */
+  .dropdown-menu {
+    right: auto;
+    left: 0;
+  }
+  
+  .dropdown-menu .dropdown-menu {
+    left: 100%;
+    top: 0;
+  }
+  
+  .dropdown-menu .dropdown-menu {
+    right: auto;
+  }
+  
+  /* Ajustement si le menu déborde à droite */
+  @media screen and (min-width: 768px) {
+    .navigation > ul > li:hover > .dropdown-menu {
+        left: auto;
+        right: 0;
+    }
+  
+    .navigation > ul > li:hover > .dropdown-menu .dropdown-menu {
+        left: auto;
+        right: 100%;
+    }
+  }
+  
+  /* Responsive */
+  @media screen and (max-width: 768px) {
+    .hamburger-icon {
+        display: block;
+    }
+  
+    .navigation {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #fff;
+        display: none;
+    }
+  
+    .navigation ul {
+        flex-direction: column;
+    }
+  
+    .navigation li {
+        width: 100%;
+    }
+  
+    .navigation .dropdown .dropdown-menu,
+    .navigation .dropdown-menu .dropdown-menu {
+        position: static;
+        box-shadow: none;
+    }
+  
+    .navigation .dropdown:hover > .dropdown-menu,
+    .navigation .submenu:hover > .dropdown-menu {
+        display: none;
+    }
+  
+    .navigation .dropdown .dropdown-menu,
+    .navigation .submenu .dropdown-menu {
+        display: none;
+    }
+  
+    .navigation .dropdown.active > .dropdown-menu,
+    .navigation .submenu.active > .dropdown-menu {
+        display: block;
+    }
+  
+    .navigation a {
+        padding: 1rem;
+    }
+  }
+  </style>
+  
+  <script>
+    // Menu mobile
+    const navToggle = document.getElementById('nav-toggle');
+    const navMenu = document.getElementById('nav-menu');
+  
+    navToggle.addEventListener('click', () => {
+        navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+    });
+  
+    // Dropdowns pour mobile
+    const dropdowns = document.querySelectorAll('.navigation .dropdown');
+  
+    dropdowns.forEach(dropdown => {
+        dropdown.addEventListener('click', function (e) {
+            if (window.innerWidth <= 768) {
+                e.preventDefault();
+                this.classList.toggle('active');
+            }
+        });
+    });
+  
+    const submenus = document.querySelectorAll('.navigation .submenu');
+  
+    submenus.forEach(submenu => {
+        submenu.addEventListener('click', function (e) {
+            if (window.innerWidth <= 768) {
+                e.preventDefault();
+                this.classList.toggle('active');
+            }
+        });
+    });
+  </script>
+  

@@ -13,6 +13,8 @@ urlpatterns = [
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("search/", search_views.search, name="search"),
+    path('cart/', include('cart.urls', namespace='cart')),
+    path('checkout/', include('checkout.urls')),
     path("__reload__/", include("django_browser_reload.urls")),
 ]
 

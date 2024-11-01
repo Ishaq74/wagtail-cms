@@ -1,4 +1,4 @@
-{% load static wagtailimages_tags %}
+{% load static wagtailcore_tags wagtailimages_tags %}
 
 <div id="banner-712">
     <div class="cs-container">
@@ -6,7 +6,7 @@
 
         {% if banner_summary %}
             <div class="cs-meta">
-                <p class="cs-summary">{{ banner_summary }}</p>
+                <p class="cs-summary">{{ banner_summary|richtext }}</p>
             </div>
         {% endif %}
 

@@ -25,6 +25,8 @@
 
         {# Global stylesheets #}
         <link rel="stylesheet" type="text/css" href="{% static 'css/cmz.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
         {# tailwind_css #}
 
         {% block extra_css %}
@@ -394,11 +396,28 @@ Hero Section -->
     {% block footer %}
     {% include "includes/footer.html" %}
     {% endblock %}  
-
+    <!-- Fenêtre modale du panier -->
+    <div id="cart-modal" class="modal" role="dialog" aria-labelledby="cart-title" aria-modal="true">
+        <div class="modal-content">
+            <span class="close-button" aria-label="Fermer">&times;</span>
+            <h2 id="cart-title">Votre Panier</h2>
+            <div id="cart-items">
+                <!-- Contenu du panier via AJAX -->
+                <div class="loader" id="cart-loader"></div>
+            </div>
+            <div id="cart-summary">
+                <p><strong>Total : <span id="cart-total">0</span> €</strong></p>
+                <a href="{% url 'cart:proceed_to_checkout' %}" class="btn btn-primary">Passer à la Caisse</a>
+            </div>
+        </div>
+    </div>
 
 
         {# Global javascript #}
         <script type="text/javascript" src="{% static 'js/cmz.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <script src="{% static 'js/cart.js' %}"></script>
 
         {% block extra_js %}
         {# Override this in templates to add extra javascript #}

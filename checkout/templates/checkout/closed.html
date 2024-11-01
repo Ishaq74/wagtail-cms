@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Magasin Fermé</h1>
+<p>{{ message }}</p>
+<h2>Heures d'ouverture :</h2>
+<ul>
+    {% for day, info in opening_hours.items %}
+        <li>
+            <strong>{{ day }} :</strong>
+            {% if info.is_closed %}
+                Fermé
+            {% else %}
+                {% for slot in info.time_slots %}
+                    {{ slot.start }} - {{ slot.end }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+<a href="{% url 'cart:cart_detail' %}">Retour au panier</a>
+{% endblock %}
