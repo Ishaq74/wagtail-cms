@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     "product",
     "cart",
     "checkout",
+    "accounts",
+    "layout",
     "wagtail_ai",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
@@ -58,9 +60,12 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "tailwind",
     "theme",
+    'wagtail.contrib.styleguide',
     "django_browser_reload",
 ]
 
+AUTH_USER_MODEL = 'accounts.CustomUser'
+LOGOUT_REDIRECT_URL = '/'
 
 TAILWIND_APP_NAME = 'theme'
 
@@ -248,3 +253,9 @@ LOGGING = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.ionos.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'contact@zatchouli.fr'
+EMAIL_HOST_PASSWORD = 'Tartare+74613'
+DEFAULT_FROM_EMAIL = 'contact@zatchouli.fr'

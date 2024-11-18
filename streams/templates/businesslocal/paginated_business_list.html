@@ -1,0 +1,41 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section class="business-list">
+    {% if heading %} {% include_block heading %} {% endif %}
+    {% if paragraph %} {% include_block paragraph %} {% endif %}
+
+    {% if businesses %}
+        <div class="grid grid-4">
+            {% for business in businesses %}
+                <div class="card">
+                    <a href="{{ business.url }}">
+                        {% if business.featured_image %}
+                            {% image business.featured_image fill-300x200 as img %}
+                            <img src="{{ img.url }}" class="card-img" alt="{{ business.title }}">
+                        {% endif %}
+                        <h3>{{ business.title }}</h3>
+                    </a>
+                    <p>{{ business.address }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if businesses.paginator.num_pages > 1 %}
+            <div class="pagination">
+                {% if businesses.has_previous %}
+                    <a href="?page=1">&laquo; Première</a>
+                    <a href="?page={{ businesses.previous_page_number }}">Précédente</a>
+                {% endif %}
+
+                <span>Page {{ businesses.number }} sur {{ businesses.paginator.num_pages }}</span>
+
+                {% if businesses.has_next %}
+                    <a href="?page={{ businesses.next_page_number }}">Suivante</a>
+                    <a href="?page={{ businesses.paginator.num_pages }}">Dernière &raquo;</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <p>Aucune entreprise trouvée.</p>
+    {% endif %}
+</section>

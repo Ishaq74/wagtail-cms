@@ -3,13 +3,13 @@
 
 {% block content %}
 
-{% with banner_title=page.title banner_summary=page.summary banner_image=page.featured_image banner_alt=page.title %}
-    {% include 'includes/banner_page.html' %}
-{% endwith %}
+{# {% with banner_title=page.title banner_summary=page.summary banner_image=page.featured_image banner_alt=page.title %} #}
+{#    {% include 'includes/banner_page.html' %} #}
+{# {% endwith %} #}
 
 <section class="product-category">
     <div class="grid grid-2">
-        <div>
+        <div class="card">
             <h1>{{ page.title }}</h1>
             <div class="category-summary">
                 {{ page.summary|richtext }}
@@ -17,38 +17,48 @@
             <div class="category-content">
                 {{ page.content|richtext }}
             </div>
-            {% if page.body %}
-                {% for block in page.body %}
-                    {% include_block block %}
-                {% endfor %}
-            {% endif %}
         </div>
         {% if page.featured_image %}
-            <div>
-                {% image page.featured_image fill-800x600 as img %}
-                <img src="{{ img.url }}" alt="{{ page.title }}">
+            <div class="card">
+                {% image page.featured_image width-500 as img %}
+                <img src="{{ img.url }}" alt="{{ page.title }}" width="300" height="300" style="object-fit:contain;">
             </div>
         {% endif %}
     </div>
 
     {% if page.get_children.live %}
-        <h2>Produits dans cette catégorie :</h2>
+        <h2>Contenu dans cette catégorie :</h2>
         <div class="grid grid-3">
-            {% for product in page.get_children.live.specific %}
+            {% for item in page.get_children.live.specific %}
                 <div class="card">
-                    <a href="{{ product.url }}">
-                        {% if product.featured_image %}
-                            {% image product.featured_image fill-300x200 as product_img %}
-                            <img src="{{ product_img.url }}" alt="{{ product.title }}">
+                    <a href="{{ item.url }}">
+                        {% if item.featured_image %}
+                            {% image item.featured_image fill-300x200 as img %}
+                            <img src="{{ img.url }}" class="card-img" alt="{{ item.title }}">
                         {% endif %}
-                        <h3>{{ product.title }}</h3>
+                        <h3>{{ item.title }}</h3>
                     </a>
-                    <p>{{ product.summary|richtext }}</p>
-                    <a href="{{ product.url }}" class="btn btn-primary">Voir le produit</a>
+
+                    {# Affichage pour les produits #}
+                    {% if item.is_product %}
+                        <p>{{ item.summary|richtext }}</p>
+                        <a href="{{ item.url }}" class="btn btn-primary">Voir le produit</a>
+                    
+                    {# Affichage pour les catégories #}
+                    {% elif item.is_category %}
+                        <p>{{ item.summary|richtext }}</p>
+                        <a href="{{ item.url }}" class="btn btn-secondary">Voir la catégorie</a>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
     {% endif %}
 </section>
+
+{% if page.body %}
+    {% for block in page.body %}
+        {% include_block block %}
+    {% endfor %}
+{% endif %}
 
 {% endblock %}

@@ -3,44 +3,10 @@
 
 {% block content %}
 
-{{ self.body }}
-
-<!-- 
-<section>
-    <h2>Tous les Blog Index Pages</h2>
-    <div class="wrapper">
-        {% if blogindexes %}
-            {% for blog_index in blogindexes %}
-                <div class="card">
-                    <a href="{% pageurl blog_index %}"><h3>{{ blog_index.title }}</h3></a>
-                    <p>{{ blog_index.subtitle }}</p>
-                    <p>{{ blog_index.summary }}</p>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>Aucune page de type Blog Index disponible pour l'instant.</p>
-        {% endif %}
-    </div>
-</section>
-
-<section>
-    <h2>Posts Récents</h2>
-    <div class="wrapper">
-        {% if blogpages %}
-            {% for blog_page in blogpages %}
-                <div class="card">
-                    <a href="{% pageurl blog_page %}"><h3>{{ blog_page.title }}</h3></a>
-                    <p>{{ blog_page.date }}</p>
-                    <p>{{ blog_page.summary }}</p>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>Aucun post récent disponible pour le moment.</p>
-        {% endif %}
-    </div>
-</section> Section Tous les Blog Index Pages -->
-
-
-
+{% if page.body %}
+    {% for block in page.body %}
+        {% include_block block %}
+    {% endfor %}
+{% endif %}
 
 {% endblock content %}

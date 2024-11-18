@@ -1,0 +1,31 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section class="product-list">
+    {% if heading %}
+    {% include_block heading %}
+    {% endif %}
+
+    {% if paragraph %}
+    {% include_block paragraph %}
+    {% endif %}
+
+    {% if products %}
+        <div class="grid grid-{{ products|length }}">
+            {% for product in products %}
+                <div class="card">
+                    {% if product.featured_image %}
+                        {% image product.featured_image fill-300x200 as img %}
+                        <img src="{{ img.url }}" class="card-img" alt="{{ product.title }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300x200?text=No+Image" alt="{{ product.title }}">
+                    {% endif %}
+                    <h3>{{ product.title }}</h3>
+                    <p>{{ product.summary|richtext }}</p>
+                    <a href="{{ product.url }}" class="btn btn-primary">Voir le produit</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Aucun produit trouvé.</p>
+    {% endif %}
+</section>

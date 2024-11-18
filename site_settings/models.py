@@ -1,8 +1,13 @@
 from django.db import models
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel, InlinePanel
 from wagtail.contrib.settings.models import BaseGenericSetting, register_setting
+from wagtail.snippets.models import register_snippet
 from modelcluster.fields import ParentalKey
 from modelcluster.models import ClusterableModel
+from wagtail.models import Orderable
+from wagtail.admin.panels import PageChooserPanel
+from autoslug import AutoSlugField
+from wagtail.models import Page
 
 # Sous-modèle pour les horaires
 class Horaire(models.Model):

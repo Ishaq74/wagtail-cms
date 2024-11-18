@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
+
+<section>
 <h1>Magasin Fermé</h1>
 <p>{{ message }}</p>
 <h2>Heures d'ouverture :</h2>
@@ -18,5 +20,6 @@
         </li>
     {% endfor %}
 </ul>
-<a href="{% url 'cart:cart_detail' %}">Retour au panier</a>
+<a class="btn btn-secondary" href="{% url 'cart:cart_detail' %}">Retour au panier</a>
+</section>
 {% endblock %}

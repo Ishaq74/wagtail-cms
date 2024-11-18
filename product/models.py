@@ -1,8 +1,7 @@
 from django import forms
 from django.db import models
-from wagtail.admin.panels import (
-    FieldPanel, MultiFieldPanel, FieldRowPanel, PageChooserPanel, InlinePanel
-)
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel, FieldRowPanel, InlinePanel
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Page
 from wagtail.snippets.models import register_snippet
@@ -12,7 +11,7 @@ from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from modelcluster.models import ClusterableModel
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from taggit.models import TaggedItemBase
-from streams import blocks as custom_blocks  # Si vous utilisez des blocs personnalisés
+from streams import blocks as custom_blocks  # Utilisé pour les blocs personnalisés
 
 @register_snippet
 class ProductVariant(ClusterableModel):
@@ -49,6 +48,57 @@ class VariantOption(models.Model):
     def __str__(self):
         return self.name
 
+class ProductIndexPage(Page):
+    max_count = 1
+    intro = RichTextField(blank=True, help_text="Introduction de la page des produits")
+
+    body = StreamField(
+        [
+            ('paginated_product_list', custom_blocks.PaginatedProductListBlock()),
+            ('limited_product_list', custom_blocks.LimitedProductListBlock()),
+            ('paginated_product_category_list', custom_blocks.PaginatedProductCategoryListBlock()),
+            ('limited_product_category_list', custom_blocks.LimitedProductCategoryListBlock()),
+            ('paginated_blog_list', custom_blocks.PaginatedBlogListBlock()),
+            ('limited_blog_list', custom_blocks.LimitedBlogListBlock()),
+            ('paginated_blog_category_list', custom_blocks.PaginatedBlogCategoryListBlock()),
+            ('limited_blog_category_list', custom_blocks.LimitedBlogCategoryListBlock()),
+            ('single_column', custom_blocks.SingleColumnBlock()),
+            ('double_column', custom_blocks.DoubleColumnBlock()),
+        ],
+        null=True, blank=True, use_json_field=True
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel('intro'),
+        FieldPanel('body'),
+    ]
+
+    subpage_types = ['product.ProductCategory', 'product.ProductPage']
+    parent_page_types = ['home.HomePage']
+
+    page_description = "Page d'accueil de la Boutique"
+
+    class Meta:
+        verbose_name = "Boutique"
+    def get_context(self, request):
+        context = super().get_context(request)
+        product_categories = self.get_children().live().type(ProductCategory).order_by('first_published_at')
+        paginator = Paginator(product_categories, 12)
+        page = request.GET.get('page')
+        try:
+            categories_paginated = paginator.page(page)
+        except PageNotAnInteger:
+            categories_paginated = paginator.page(1)
+        except EmptyPage:
+            categories_paginated = paginator.page(paginator.num_pages)
+            
+        featured_products = ProductPage.objects.live().filter(is_featured=True).order_by('first_published_at')[:6]
+
+        context['product_categories'] = categories_paginated
+        context['pagination'] = categories_paginated
+        context['featured_products'] = featured_products
+        return context
+
 class ProductCategory(Page):
     summary = RichTextField(blank=True)
     content = RichTextField(blank=True)
@@ -58,10 +108,13 @@ class ProductCategory(Page):
     )
     is_featured = models.BooleanField(default=False)
 
-    body = StreamField([
-        ('single_column', custom_blocks.SingleColumnBlock()),
-        ('double_column', custom_blocks.DoubleColumnBlock()),
-    ], null=True, blank=True, use_json_field=True)
+    body = StreamField(
+        [
+            ('single_column', custom_blocks.SingleColumnBlock()),
+            ('double_column', custom_blocks.DoubleColumnBlock()),
+        ],
+        null=True, blank=True, use_json_field=True
+    )
 
     content_panels = Page.content_panels + [
         FieldPanel('summary'),
@@ -72,10 +125,14 @@ class ProductCategory(Page):
     ]
 
     subpage_types = ['product.ProductCategory', 'product.ProductPage']
-    parent_page_types = ['home.HomePage', 'product.ProductCategory']
+    parent_page_types = ['product.ProductIndexPage','product.ProductCategory']
+
+    page_description = "Créer une catégorie de produits."
 
     def __str__(self):
         return self.title
+    def is_category(self):
+        return True
 
 class ProductPageTag(TaggedItemBase):
     content_object = ParentalKey(
@@ -107,10 +164,13 @@ class ProductPage(Page):
         null=True, blank=True, use_json_field=True
     )
 
-    body = StreamField([
-        ('single_column', custom_blocks.SingleColumnBlock()),
-        ('double_column', custom_blocks.DoubleColumnBlock()),
-    ], null=True, blank=True, use_json_field=True)
+    body = StreamField(
+        [
+            ('single_column', custom_blocks.SingleColumnBlock()),
+            ('double_column', custom_blocks.DoubleColumnBlock()),
+        ],
+        null=True, blank=True, use_json_field=True
+    )
 
     content_panels = Page.content_panels + [
         FieldPanel('summary'),
@@ -130,11 +190,15 @@ class ProductPage(Page):
         ], heading="Détails du produit"),
         FieldPanel('variants'),
         FieldPanel('body'),
-        # Votre StreamField pour la galerie d'images, que nous ne modifions pas
     ]
 
     parent_page_types = ['product.ProductCategory']
     subpage_types = []
 
+    page_description = "Créer un produit."
+
     def __str__(self):
         return self.title
+
+    def is_product(self):
+        return True

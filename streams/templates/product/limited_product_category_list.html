@@ -1,0 +1,30 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section class="product-category-list">
+    {% if heading %}
+    {% include_block heading %}
+    {% endif %}
+    
+    {% if paragraph %}
+    {% include_block paragraph %}
+    {% endif %}
+
+{% if product_categories %}
+    <div class="grid grid-4">
+        {% for category in product_categories %}
+            <div class="card">
+                <a href="{{ category.url }}">
+                    {% if category.featured_image %}
+                        {% image category.featured_image fill-300x200 as img %}
+                        <img src="{{ img.url }}" class="card-img" alt="{{ category.title }}">
+                    {% endif %}
+                    <h3>{{ category.title }}</h3>
+                </a>
+                <p>{{ category.summary|richtext }}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>Aucune catégorie de produits trouvée.</p>
+{% endif %}
+</section>

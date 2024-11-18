@@ -1,0 +1,12 @@
+<!-- templates/accounts/activation_email.html -->
+
+Bonjour {{ user.username }},
+
+Merci de vous être inscrit sur notre site. Veuillez cliquer sur le lien ci-dessous pour activer votre compte :
+
+http://{{ domain }}{% url 'accounts:activate' uidb64=uid token=token %}
+
+Si vous ne pouvez pas cliquer sur le lien, copiez-le et collez-le dans votre navigateur.
+
+Merci,
+L'équipe du site

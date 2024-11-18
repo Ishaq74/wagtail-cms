@@ -1,268 +1,412 @@
-{# templates/includes/navbar.html #}
+{% load static wagtailimages_tags navigation_tags %}
 
-{% load wagtailcore_tags %}
-{% load navbar_tags %}
-{% get_navbar_pages as navbar_pages %}
+<header id="header" name="header" class="header">
 
-<header>
-    <div class="logo">
-        <a class="logo-text" href="{% pageurl navbar_pages.home_and_flex_pages.0 %}">DevDevDev</a>
-        <label for="nav-toggle" class="hamburger-icon">
-            <i class="fa-solid fa-bars"></i>
-        </label>
-        <input type="checkbox" id="nav-toggle" />
-    </div>
-    <nav class="navigation">
-        <ul>
-            <!-- Afficher la page d'accueil et les pages flex -->
-            {% for page in navbar_pages.home_and_flex_pages %}
-                <li><a class="link link1" href="{{ page.url }}">{{ page.title }}</a></li>
-            {% endfor %}
+<!-- Logo -->
+<a href="/" class="title_and_logo" aria-label="Accueil">
+{% if settings.layout.HeaderSettings.display_logo and settings.site_settings.MediaSettings.logo %}
+{% image settings.site_settings.MediaSettings.logo fill-100x100 as logo_rendition %}
+<img class="logo" src="{{ logo_rendition.url }}" 
+        alt="{{ settings.site_settings.MediaSettings.logo_alt|default:'Logo de l\'entreprise' }}">
+{% endif %}
 
-            <!-- Afficher le BlogIndexPage avec ses catégories -->
-            {% if navbar_pages.blog_index %}
-                <li class="dropdown">
-                    <a class="link link1" href="{{ navbar_pages.blog_index.url }}">{{ navbar_pages.blog_index.title }}</a>
-                    {% if navbar_pages.blog_categories %}
-                        <ul class="dropdown-menu">
-                            <!-- Sous-menu des catégories (2 niveaux max) -->
-                            {% for category in navbar_pages.blog_categories %}
-                                <li>
-                                    <a class="link link1" href="{{ category.url }}">{{ category.title }}</a>
-                                    {% if category.get_children.live.public.in_menu.exists %}
-                                        <ul class="dropdown-submenu">
-                                            {% for subcategory in category.get_children.live.public.in_menu %}
-                                                <li><a class="link link1" href="{{ subcategory.url }}">{{ subcategory.title }}</a></li>
-                                            {% endfor %}
-                                        </ul>
-                                    {% endif %}
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-                </li>
-            {% endif %}
+<!-- Site Title -->
+{% if settings.layout.HeaderSettings.display_site_title %}
+<span class="title">{{ settings.site_settings.OrganisationSettings.nom_entreprise }}</span>
+{% endif %}
+</a>
 
-            <!-- Lien vers Services avec les catégories de services -->
-            <li class="dropdown">
-                <a class="link link1" href="#">Services</a>
-                {% if navbar_pages.service_categories %}
-                    <ul class="dropdown-menu">
-                        {% for category in navbar_pages.service_categories %}
-                            <li><a class="link link1" href="{{ category.url }}">{{ category.title }}</a></li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </li>
+{% if settings.layout.HeaderSettings.display_menu and settings.layout.HeaderSettings.selected_menu %}
+<nav id="header-navigation" name="header-navigation" class="navbar">
+<ul>
+{% get_menu_items settings.layout.HeaderSettings.selected_menu.title as menu_items %}
+{% if menu_items %}
+{% for item in menu_items %}
+<li class="{% if item.children.exists %}has-dropdown{% endif %}">
+    <a class="link link-primary" href="{{ item.get_url }}" 
+       aria-haspopup="{% if item.children.exists %}true{% else %}false{% endif %}" 
+       aria-expanded="false">
+        {{ item.label }}
+        {% if item.children.exists %}
+        <span class="dropdown-chevron">▼</span>
+        {% endif %}
+    </a>
+    {% if item.children.exists %}
+    <ul class="dropdown" role="menu">
+        {% for child in item.children.all %}
+        <li><a class="link link-primary" href="{{ child.get_url }}" role="menuitem">{{ child.label }}</a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</li>
+{% endfor %}
+{% else %}
+<li><a href="#">Menu Vide</a></li>
+{% endif %}
+</ul>
+</nav>
+{% else %}
+<p>Menu non configuré.</p>
+{% endif %}
 
-            <!-- Lien vers Boutique avec les catégories de produits -->
-            <li class="dropdown">
-                <a class="link link1" href="#">Boutique</a>
-                {% if navbar_pages.product_categories %}
-                    <ul class="dropdown-menu">
-                        {% for category in navbar_pages.product_categories %}
-                            <li><a class="link link1" href="{{ category.url }}">{{ category.title }}</a></li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </li>
 
-            <!-- Icône du Panier -->
-            <li class="cart-icon">
-                <a href="http://localhost:8000/cart/" id="cart-button" aria-haspopup="dialog" aria-expanded="false">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span id="cart-count">0</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+<div class="icons">
+    {% if settings.layout.HeaderSettings.display_cta_button %}
+    <a href="{{ settings.layout.HeaderSettings.cta_button_url }}" 
+       class="header_cta-button btn btn-primary"
+       {% if settings.layout.HeaderSettings.open_in_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}>
+        {{ settings.layout.HeaderSettings.cta_button_text }}
+    </a>
+    {% endif %}
+<div class="fas fa-bars" id="menu-btn"></div>
+<div class="fas fa-search" id="search-btn"></div>
+{% if settings.layout.HeaderSettings.display_cart_icon %}
+<a href="{% url 'cart:cart_detail' %}" id="cart-button" class="header_cart" aria-haspopup="dialog" aria-expanded="false">
+<div class="fas fa-shopping-cart" id="cart-btn">
+<span id="cart-count" class="header_cart-count">0</span>
+</div>
+</a>
+{% endif %}
+
+{% if settings.layout.HeaderSettings.display_account_icon %}
+<div class="dropdown-profile">
+{% if user.is_authenticated %}
+<div class="fas fa-user" id="profile-btn"></div>
+<ul class="dropdown">
+<li><a href="{% url 'accounts:profile' %}" class="link link-primary">Profil</a></li>
+<li>
+    <form action="{% url 'accounts:logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-secondary">
+            <i class="fas fa-sign-out-alt"></i> Déconnexion
+        </button>
+    </form>
+</li>
+</ul>
+{% else %}
+<a href="{% url 'accounts:login' %}" class="header_account">
+<div class="fas fa-user"></div>
+</a>
+{% endif %}
+</div>
+{% endif %}
+
+{% if settings.layout.HeaderSettings.display_search_button %}
+<form action="" class="search-form">
+<input type="search" id="search-box" placeholder="Rechercher...">
+<label for="search-box" class="fas fa-search"></label>
+</form>
+{% endif %}
+
 </header>
 
 
-
+<!-- Header section end -->
 
 <style>
-
-  .logo-text {
-    color: var(--accent-light);
-    font-family: var(--font-title);
-    font-size: clamp(1.125rem, 5vw, 2rem);
-  }
-  /* Styles de base pour la navigation */
-  .navigation {
+.header{
     position: relative;
-  }
-  
-  .navigation ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    top: 0;
+    left: 0; right: 0;
+    z-index: 1000;
     display: flex;
-  }
-  
-  .navigation li {
-    position: relative;
-  }
-  
-  .navigation a {
-    display: block;
-    padding: 1rem;
-    text-decoration: none;
-    color: var(--accent-light);
+    align-items: center;
+    justify-content: space-between;
+    padding: 2rem;
+    background: var(--color-secondary);
+    box-shadow: var(--box-shadow);
+}
+
+.header .title_and_logo {
+    display: grid;
+    justify-items: center;
   }
 
-  .navigation a:hover {
-    color: var(--light);
-  }
-  
-  .hamburger-icon {
-    display: none;
-    background: none;
-    border: none;
+.header .logo{
+    max-width: 100px;
+    color: var(--dark);
+}
+
+.header .title {
+    color: var(--color-accent);
     font-size: 1.5rem;
-    cursor: pointer;
-  }
-  
-  /* Dropdown */
-  .dropdown-menu {
+    font-weight: bold;
+    text-decoration: none;
+    text-wrap: nowrap;
+}
+
+.header .navbar {
+    display: flex;
+    padding: 1rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.header .navbar a{
+    font-size: 1.5rem;
+}
+
+.header .navbar .dropdown {
     display: none;
     position: absolute;
-    background-color: var(--secondary);
-    min-width: 200px;
-    z-index: 1;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    z-index: 99;
-  }
-  
-  .dropdown:hover > .dropdown-menu {
-    display: block;
-  }
-  
-  .dropdown-menu li {
-    position: relative;
-  }
-  
-  .dropdown-menu a {
-    padding: 0.5rem 1rem;
-  }
-  
-  .submenu .dropdown-menu {
-    left: 100%;
-    top: 0;
-  }
-  
-  .submenu:hover > .dropdown-menu {
-    display: block;
-  }
-  
-  /* Empêcher les menus déroulants de sortir de l'écran */
-  .dropdown-menu {
-    right: auto;
+    top: 100%;
     left: 0;
-  }
-  
-  .dropdown-menu .dropdown-menu {
-    left: 100%;
-    top: 0;
-  }
-  
-  .dropdown-menu .dropdown-menu {
-    right: auto;
-  }
-  
-  /* Ajustement si le menu déborde à droite */
-  @media screen and (min-width: 768px) {
-    .navigation > ul > li:hover > .dropdown-menu {
-        left: auto;
-        right: 0;
-    }
-  
-    .navigation > ul > li:hover > .dropdown-menu .dropdown-menu {
-        left: auto;
-        right: 100%;
-    }
-  }
-  
-  /* Responsive */
-  @media screen and (max-width: 768px) {
-    .hamburger-icon {
-        display: block;
-    }
-  
-    .navigation {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background-color: #fff;
-        display: none;
-    }
-  
-    .navigation ul {
-        flex-direction: column;
-    }
-  
-    .navigation li {
-        width: 100%;
-    }
-  
-    .navigation .dropdown .dropdown-menu,
-    .navigation .dropdown-menu .dropdown-menu {
-        position: static;
-        box-shadow: none;
-    }
-  
-    .navigation .dropdown:hover > .dropdown-menu,
-    .navigation .submenu:hover > .dropdown-menu {
-        display: none;
-    }
-  
-    .navigation .dropdown .dropdown-menu,
-    .navigation .submenu .dropdown-menu {
-        display: none;
-    }
-  
-    .navigation .dropdown.active > .dropdown-menu,
-    .navigation .submenu.active > .dropdown-menu {
-        display: block;
-    }
-  
-    .navigation a {
-        padding: 1rem;
-    }
-  }
-  </style>
-  
-  <script>
-    // Menu mobile
-    const navToggle = document.getElementById('nav-toggle');
-    const navMenu = document.getElementById('nav-menu');
-  
-    navToggle.addEventListener('click', () => {
-        navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
-    });
-  
-    // Dropdowns pour mobile
-    const dropdowns = document.querySelectorAll('.navigation .dropdown');
-  
-    dropdowns.forEach(dropdown => {
-        dropdown.addEventListener('click', function (e) {
-            if (window.innerWidth <= 768) {
-                e.preventDefault();
-                this.classList.toggle('active');
+    background: var(--color-secondary);
+    box-shadow: var(--box-shadow);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    list-style: none;
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.header .navbar .has-dropdown:hover .dropdown {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.header .navbar .has-dropdown .dropdown a {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--dark);
+    text-decoration: none;
+}
+
+.header .navbar .has-dropdown .dropdown a:hover {
+    background: var(--color-primary-dark);
+    color: #fff;
+}
+
+
+.header .icons div{
+    height: 4.5rem;
+    width: 4.5rem;
+    line-height: 4.5rem;
+    border-radius: .5rem;
+    background: #eee;
+    color: var(--dark);
+    font-size: 2rem;
+    cursor: pointer;
+    text-align: center;
+}
+
+.icons {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.header .icons div:hover{
+    background: var(--color-primary-dark);
+    color: #fff;
+}
+
+#menu-btn{
+    display: none;
+}
+
+.header .search-form{
+    position:absolute;
+    top: 110%; right: -110%;
+    width: 50rem;
+    height: 5rem;
+    background: #fff;
+    border-radius: .5rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    box-shadow: var(--box-shadow);
+}
+
+.header .search-form.active{
+    right: 2rem;
+    transition: .4s linear;
+}
+
+.header .search-form input{
+    height: 100%;
+    width: 100%;
+    background: none;
+    text-transform: none;
+    font-size: 1.6rem;
+    color: var(--dark);
+    padding: 0 1.5rem;
+}
+
+.header .search-form label{
+    font-size: 2.2rem;
+    padding-right: 1.5rem;
+    color:var(--dark);
+    cursor: pointer;
+}
+
+.header .search-form label:hover{
+    color:var(--color-primary);
+}
+
+#cart-btn {
+    position: relative;
+}
+
+#cart-count {
+    background: #a4303f;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    place-content: center;
+    animation: bounce 0.3s;
+    z-index: 99;
+}
+
+/* Animation pour le compteur */
+@keyframes bounce {
+    0% { transform: scale(1);}
+    50% { transform: scale(1.3);}
+    100% { transform: scale(1);}
+}
+
+.animate-bounce {
+    animation: bounce 0.3s;
+}
+
+.dropdown-profile {
+    position: relative;
+}
+
+.dropdown-profile .dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--light);
+    border: solid 1px var(--dark);
+    box-shadow: var(--box-shadow);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    list-style: none;
+}
+
+.dropdown-profile:hover .dropdown {
+    display: grid;
+    justify-items: start;
+}
+
+
+@media (max-width:768px){
+.header {
+    display: flex;
+    flex-direction: column;
+    gap:1rem;
+}
+
+#menu-btn{
+    display: inline-block;
+}
+
+.header .search-form{
+    width:90%;
+}
+
+.header .navbar{
+    position: absolute;
+    top:110%; right:-110%;
+    width:30rem;
+    box-shadow: var(--box-shadow);
+    border-radius: .5rem;
+    background: #fff;
+    display: grid;
+    justify-items:center;
+}
+
+.header .navbar.active{
+    right:2rem;
+    transition: .4s linear;
+}
+
+.header .navbar a{
+    font-size: 2rem;
+    margin:2rem 2.5rem;
+    display: block;
+}
+.header .navbar .has-dropdown .dropdown {
+    display: none;
+    position: relative;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.header .navbar .has-dropdown.open .dropdown {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+}
+</style>
+
+<script>
+let searchForm = document.querySelector('.search-form');
+
+document.querySelector('#search-btn').onclick = ()=>{
+searchForm.classList.toggle('active');
+shoppingCart.classList.remove('active');
+loginForm.classList.remove('active');
+navbar.classList.remove('active');
+
+}
+
+let navbar = document.querySelector('.navbar');
+
+document.querySelector('#menu-btn').onclick = () =>{
+navbar.classList.toggle('active');
+searchForm.classList.remove('active');
+shoppingCart.classList.remove('active');
+loginForm.classList.remove('active');
+}
+
+// Dropdown handling for mobile
+const dropdownLinks = document.querySelectorAll('.navbar .has-dropdown > a');
+
+dropdownLinks.forEach(link => {
+    link.addEventListener('click', function (e) {
+        const parent = this.parentElement;
+        const dropdown = parent.querySelector('.dropdown');
+
+        if (dropdown) {
+            e.preventDefault();
+            const isOpen = parent.classList.contains('open');
+            document.querySelectorAll('.navbar .has-dropdown.open').forEach(item => {
+                item.classList.remove('open');
+            });
+            if (!isOpen) {
+                parent.classList.add('open');
             }
-        });
+        }
     });
-  
-    const submenus = document.querySelectorAll('.navigation .submenu');
-  
-    submenus.forEach(submenu => {
-        submenu.addEventListener('click', function (e) {
-            if (window.innerWidth <= 768) {
-                e.preventDefault();
-                this.classList.toggle('active');
-            }
+});
+
+// Close dropdowns on outside click
+document.addEventListener('click', function (e) {
+    const isDropdown = e.target.closest('.has-dropdown');
+    if (!isDropdown) {
+        document.querySelectorAll('.navbar .has-dropdown.open').forEach(item => {
+            item.classList.remove('open');
         });
-    });
-  </script>
-  
+    }
+});
+</script>
