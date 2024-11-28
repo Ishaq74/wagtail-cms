@@ -6,14 +6,14 @@
         <div class="flex-2">
             <div class="entreprise-info">
                 <div class="title_and_logo align-y">
-                {% if settings.layout.HeaderSettings.display_logo and settings.site_settings.MediaSettings.logo %}
+                {% if settings.layout.FooterSettings.display_logo and settings.site_settings.MediaSettings.logo %}
                 {% image settings.site_settings.MediaSettings.logo fill-150x150 as logo_rendition %}
                 <img class="logo" src="{{ logo_rendition.url }}" 
                      alt="{{ settings.site_settings.MediaSettings.logo_alt|default:'Logo de l\'entreprise' }}">
                 {% endif %}
-                <h2>
-                    🏮 {{ settings.site_settings.OrganisationSettings.nom_entreprise|default:"Nom de l'entreprise" }}
-                </h2>
+                <p class="h3">
+                    {{ settings.site_settings.OrganisationSettings.nom_entreprise|default:"Nom de l'entreprise" }}
+                </p>
             </div>
                 <address>
                     🏘️ {{ settings.site_settings.OrganisationSettings.adresse_rue|default:"Adresse indisponible" }}<br>
@@ -49,8 +49,8 @@
 
         <!-- Section horaires d'ouverture -->
         {% if settings.layout.FooterSettings.display_opening_hours %}
-        <div class="flex-1 horaires">
-            <h3>🕞 Horaires d'ouverture</h3>
+        <div class="flex-2 horaires">
+            <p class="h5">🕞 Horaires d'ouverture</p>
             <ul>
                 {% if settings.site_settings.HorairesOuverture.horaires.exists %}
                 {% for horaire in settings.site_settings.HorairesOuverture.horaires.all %}
@@ -72,7 +72,7 @@
         <!-- Menu 1 -->
         {% if settings.layout.FooterSettings.selected_menu_1 %}
         <div class="flex-1">
-            <h3>{{ settings.layout.FooterSettings.selected_menu_1.title }}</h3>
+            <p class="h5">{{ settings.layout.FooterSettings.selected_menu_1.title }}</p>
             <ul>
                 {% for item in settings.layout.FooterSettings.selected_menu_1.items.all %}
                 <li>
@@ -86,7 +86,7 @@
         <!-- Menu 2 -->
         {% if settings.layout.FooterSettings.selected_menu_2 %}
         <div class="flex-1">
-            <h3>🕞 {{ settings.layout.FooterSettings.selected_menu_2.title }}</h3>
+            <p class="h5">{{ settings.layout.FooterSettings.selected_menu_2.title }}</p>
             <ul>
                 {% for item in settings.layout.FooterSettings.selected_menu_2.items.all %}
                 <li>

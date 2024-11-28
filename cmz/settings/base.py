@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     "checkout",
     "accounts",
     "layout",
+    "smtp",
+    "taxes",
     "wagtail_ai",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
@@ -230,6 +232,7 @@ WAGTAIL_AI = {
 }
 
 # WAGTAILIMAGES_IMAGE_FORM_BASE = "wagtail_ai.forms.DescribeImageForm"
+
 
 LOGGING = {
     'version': 1,
