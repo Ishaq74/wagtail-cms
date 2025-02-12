@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+
+    <!-- Bannière pour l'article -->
+    {% with banner_title=page.title banner_date=page.area_served banner_summary=page.summary banner_image=page.featured_image banner_alt=page.title %}
+        {% include 'includes/banner_page.html' %}
+    {% endwith %}
+<section class="service-page">
+    <div class="grid">
+        {{ page.content|richtext }}
+</section>
+
+    <!-- Affichage des blocs -->
+{% if page.body %}
+    {% for block in page.body %}
+        {% include_block block %}
+    {% endfor %}
+{% endif %}
+
+{% endblock %}

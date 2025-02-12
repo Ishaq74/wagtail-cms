@@ -1,0 +1,31 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section class="limited-blog-list">
+    {% if heading %}
+    {% include_block heading %}
+    {% endif %}
+
+    {% if paragraph %}
+    {% include_block paragraph %}
+    {% endif %}
+
+    {% if blogpages %}
+        <div class="grid grid-{{ blogpages|length }}">
+            {% for blog in blogpages %}
+                <div class="card">
+                    <a href="{{ blog.url }}">
+                        {% if blog.featured_image %}
+                            {% image blog.featured_image fill-300x200 as img %}
+                            <img src="{{ img.url }}" class="card-img" alt="{{ blog.title }}">
+                        {% endif %}
+                        <h3>{{ blog.title }}</h3>
+                    </a>
+                    <p>{{ blog.summary|richtext }}</p>
+                    <span class="date">{{ blog.date }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Aucun article de blog trouvé.</p>
+    {% endif %}
+</section>

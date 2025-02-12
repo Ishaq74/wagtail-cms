@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+    <h1>Le Magasin est fermé.</h1>
+    <h2>Horaires d'ouverture</h2>
+    <div>
+        {% for block in opening_hours %}
+            <div>
+                <strong>
+                    {% if block.day == 'monday' %} Lundi
+                    {% elif block.day == 'tuesday' %} Mardi
+                    {% elif block.day == 'wednesday' %} Mercredi
+                    {% elif block.day == 'thursday' %} Jeudi
+                    {% elif block.day == 'friday' %} Vendredi
+                    {% elif block.day == 'saturday' %} Samedi
+                    {% elif block.day == 'sunday' %} Dimanche
+                    {% endif %}
+                    :
+                </strong>
+                {% if block.is_closed %}
+                    <span>Fermé</span>
+                {% else %}
+                    <span>{{ block.open_time }} - {{ block.close_time }}</span>
+                    {% if block.second_open_time and block.second_close_time %}
+                        | <span>{{ block.second_open_time }} - {{ block.second_close_time }}</span>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "wagtailadmin/base.html" %}
+
+{% block content %}
+  <h1>Commandes</h1>
+  <ul>
+    {% for order in orders %}
+      <li>
+        {{ order.customer_name }} ({{ order.email }})
+        <a href="{% url 'orders:detail' order.pk %}">Voir les détails</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section class="business-category-list">
+    {% if heading %} {% include_block heading %} {% endif %}
+    {% if paragraph %} {% include_block paragraph %} {% endif %}
+
+    {% if categories %}
+        <div class="grid grid-4">
+            {% for category in categories %}
+                <div class="card">
+                    <a href="{{ category.url }}">
+                        {% if category.featured_image %}
+                            {% image category.featured_image fill-300x200 as img %}
+                            <img src="{{ img.url }}" class="card-img" alt="{{ category.title }}">
+                        {% endif %}
+                        <h3>{{ category.title }}</h3>
+                    </a>
+                    <p>{{ category.summary }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if categories.paginator.num_pages > 1 %}
+            <div class="pagination">
+                {% if categories.has_previous %}
+                    <a href="?page=1">&laquo; Première</a>
+                    <a href="?page={{ categories.previous_page_number }}">Précédente</a>
+                {% endif %}
+
+                <span>Page {{ categories.number }} sur {{ categories.paginator.num_pages }}</span>
+
+                {% if categories.has_next %}
+                    <a href="?page={{ categories.next_page_number }}">Suivante</a>
+                    <a href="?page={{ categories.paginator.num_pages }}">Dernière &raquo;</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <p>Aucune catégorie trouvée.</p>
+    {% endif %}
+</section>

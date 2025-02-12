@@ -1,0 +1,25 @@
+{% load wagtailcore_tags image_tags %}
+
+<section class="auto-grid">
+    <div class="wrapper">
+        {% for item in self.items %}
+            <div class="card">
+                {% if item.heading %}
+                    <{{ item.heading.level }}>{{ item.heading.text }}</{{ item.heading.level }}>
+                {% endif %}
+                {% if item.paragraph %}
+                    <p>{{ item.paragraph|richtext }}</p>
+                {% endif %}
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" alt="">
+                {% endif %}
+                {% if item.quote %}
+                    <blockquote>{{ item.quote }}</blockquote>
+                {% endif %}
+                {% if item.button %}
+                    <a href="{{ item.button.link }}">{{ item.button.text }}</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</section>

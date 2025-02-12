@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block title %}{{ page.title }}{% endblock %}
+{% block content %}
+
+{{ self.body }}
+
+<!-- Hero Section - À propos -->
+<section>
+    <div class="wrapper">
+        <div class="card">
+            <h1>{{ page.title }}</h1>
+            <p>Bienvenue dans l'annuaire du Nord de la Guadeloupe ! Notre mission est simple : connecter les habitants et les visiteurs avec les meilleurs artisans, commerces, et entreprises locales. 🏝️</p>
+            <p>Que vous soyez un résident à la recherche de services ou un touriste curieux d'explorer les trésors cachés de la région, notre plateforme est là pour vous offrir une expérience fluide et informative.</p>
+        </div>
+        <img src="https://via.placeholder.com/400" alt="Illustration des commerces locaux" />
+    </div>
+</section>
+
+<!-- Section Notre Histoire -->
+<section>
+    <h2>Notre Histoire 📖</h2>
+    <div class="wrapper">
+        <div class="card">
+            <p>Depuis plusieurs années, les commerçants et artisans du Nord de la Guadeloupe se battent pour être visibles dans un monde de plus en plus digitalisé. Notre équipe a identifié ce besoin crucial et a décidé de lancer cet annuaire pour permettre à chaque entreprise de la région de briller en ligne. 💼</p>
+        </div>
+        <img src="https://via.placeholder.com/350" alt="Image représentant la création de l'annuaire" />
+    </div>
+</section>
+
+<!-- Section Notre Impact -->
+<section>
+    <h2>Notre Impact 💡</h2>
+    <div class="wrapper">
+        <div class="card">
+            <h3>Pour les Commerçants</h3>
+            <p>Avec notre annuaire, chaque commerçant local peut enfin avoir une présence en ligne solide et accessible. Nous simplifions le référencement pour les petites et moyennes entreprises, leur permettant ainsi de toucher un public plus large. 🌍</p>
+        </div>
+        <div class="card">
+            <h3>Pour les Consommateurs</h3>
+            <p>Pour les consommateurs, notre annuaire est une mine d’or d’informations locales. Trouver des services de confiance, découvrir de nouvelles boutiques et réserver des expériences devient simple et rapide. 🛍️</p>
+        </div>
+    </div>
+</section>
+
+<!-- Section Nos Valeurs -->
+<section>
+    <h2>Nos Valeurs 🌱</h2>
+    <div class="wrapper">
+        <div class="card">
+            <h3>Proximité</h3>
+            <p>Nous mettons en avant les commerces locaux pour renforcer les liens entre les habitants et leurs commerçants.</p>
+        </div>
+        <div class="card">
+            <h3>Accessibilité</h3>
+            <p>Nous croyons que chaque commerce, grand ou petit, mérite d’être vu et accessible à tous en ligne.</p>
+        </div>
+        <div class="card">
+            <h3>Fiabilité</h3>
+            <p>Nous vérifions régulièrement les informations pour offrir des recommandations fiables et à jour. ✅</p>
+        </div>
+    </div>
+</section>
+
+<!-- Section Contact -->
+<section>
+    <h2>Contactez-Nous 📞</h2>
+    <div class="wrapper">
+        <div class="card">
+            <p>Vous avez des questions ou souhaitez en savoir plus ? N'hésitez pas à nous contacter. Nous sommes disponibles pour répondre à toutes vos interrogations et pour vous aider à rejoindre notre annuaire. ✉️</p>
+            <a href="mailto:info@annuaire-guadeloupe.com" class="bg-blue-500 text-white p-2 rounded-lg">Envoyer un e-mail</a>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

@@ -1,0 +1,42 @@
+<!-- templates/accounts/profile.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="wrapper">
+    <div class="card">
+        <div class="wrapper" style="--set: 0px;">
+            <h2>{{ user.username }}</h2>
+            {% if user.profile_picture %}
+                <img class="profile-picture" src="{{ user.profile_picture.url }}" alt="Photo de profil">
+            {% endif %}
+        </div>
+        <p>Email : {{ user.email }}</p>
+        <p>Prénom : {{ user.first_name }}</p>
+        <p>Nom de famille : {{ user.last_name }}</p>
+        <p>Numéro de téléphone : {{ user.phone_number }}</p>
+        <p>Adresse :</p>
+        <p>{{ user.address_line1 }} {{ user.address_line2 }}</p>
+        <p>{{ user.postal_code }} {{ user.city }}</p>
+        <p>{{ user.country }}</p>
+        <div class="btn-group">
+            <a class="btn btn-primary" href="{% url 'accounts:edit_profile' %}">Modifier mon profil</a>
+            <a class="btn btn-secondary" href="{% url 'accounts:delete_account' %}">Supprimer mon compte</a>
+        </div>
+    </div>
+    <div class="card">
+        <h3>Vos commandes</h3>
+        {% if orders %}
+            <ul>
+            {% for order in orders %}
+                <li>
+                    Commande #{{ order.id }} - Total : {{ order.total_amount }} {{ order.currency }} - Statut : {{ order.get_status_display }}
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>Vous n'avez pas encore passé de commandes.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

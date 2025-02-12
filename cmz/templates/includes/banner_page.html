@@ -1,0 +1,134 @@
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+<div id="banner-712">
+    <div class="cs-container">
+        <h1 class="cs-int-title">{{ banner_title|default:'Titre par défaut' }}</h1>
+
+        {% if banner_summary %}
+            <div class="cs-meta">
+                <p class="cs-summary">{{ banner_summary|richtext }}</p>
+            </div>
+        {% endif %}
+
+        {% if banner_date %}
+            <div class="cs-meta">
+                <p class="cs-date">{{ banner_date }}</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="cs-background">
+        {% if banner_image %}
+            {% image banner_image fill-1280x568 as rendition %}
+            <img 
+                loading="eager" 
+                decoding="async" 
+                src="{{ rendition.url }}" 
+                alt="{{ banner_alt|default:'Image placeholder' }}">
+        {% else %}
+            <img 
+                loading="eager" 
+                decoding="async" 
+                src="https://via.placeholder.com/1280x568?text=No+Image" 
+                alt="{{ banner_alt|default:'Image placeholder' }}">
+        {% endif %}
+    </div>
+</div>
+
+
+
+
+
+<style>
+/*-- -------------------------- -->
+<---          Banner            -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #banner-712 {
+        padding: 1rem ;
+        position: relative;
+        z-index: 1;
+    }
+
+    #banner-712 .cs-container {
+        width: 100%;
+        max-width: 80rem;
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    #banner-712 .cs-int-title {
+        color: var(--light);
+    }
+
+    /* Styles pour les métadonnées : date, auteur, résumé */
+    #banner-712 .cs-meta {
+        color: var(--light);
+    }
+
+    #banner-712 .cs-date, #banner-712 .cs-author {
+        font-style: italic;
+        color: var(--secondary);
+    }
+
+
+    /* Style de l'image de fond */
+    #banner-712 .cs-background {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+    }
+
+    /* Applique l'image de fond responsive */
+    #banner-712 .cs-background img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    #banner-712 .cs-background:before {
+        /* overlay pour améliorer la lisibilité du texte */
+        content: "";
+        position: absolute;
+        display: block;
+        height: 100%;
+        width: 100%;
+        background: var(--dark);
+        opacity: 0.75;
+        top: 0;
+        left: 0;
+        z-index: 1;
+    }
+}
+
+/* Tablet - 768px */
+@media only screen and (min-width: 48rem) {
+
+    #banner-712 {
+        padding: 2rem 1rem ;
+    }
+    #banner-712 .cs-background:before {
+        opacity: 1;
+        background: linear-gradient(
+            90.01deg,
+            rgba(0, 0, 0, 0.9) 16.86%,
+            rgba(0, 0, 0, 0) 100%
+        );
+    }
+
+    #banner-712 .cs-summary {
+        max-width: 700px;
+    }
+}
+
+</style>

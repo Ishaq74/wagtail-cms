@@ -1,0 +1,16 @@
+<!-- templates/accounts/edit_profile.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="place-center">
+    <div class="edit_profile">
+        <h1>Modifier mon profil</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Enregistrer les modifications</button>
+</form>
+    </div>
+</section>
+{% endblock %}

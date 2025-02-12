@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section>
+<h1>Erreur de Paiement</h1>
+<p>{{ error_message }}</p>
+<a href="{% url 'checkout:checkout' %}" class="btn btn-primary">Retourner au checkout</a>
+</section>
+{% endblock %}

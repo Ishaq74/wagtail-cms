@@ -1,0 +1,109 @@
+{% load static wagtailimages_tags navigation_tags %}
+<footer>
+    <section class="flex-container bg-primary-dark">
+        <!-- Section "À propos" -->
+        {% if settings.layout.FooterSettings.display_about_section %}
+        <div class="flex-2">
+            <div class="entreprise-info">
+                <div class="title_and_logo align-y">
+                {% if settings.layout.FooterSettings.display_logo and settings.site_settings.MediaSettings.logo %}
+                {% image settings.site_settings.MediaSettings.logo fill-150x150 as logo_rendition %}
+                <img class="logo" src="{{ logo_rendition.url }}" 
+                     alt="{{ settings.site_settings.MediaSettings.logo_alt|default:'Logo de l\'entreprise' }}">
+                {% endif %}
+                <p class="h3">
+                    {{ settings.site_settings.OrganisationSettings.nom_entreprise|default:"Nom de l'entreprise" }}
+                </p>
+            </div>
+                <address>
+                    🏘️ {{ settings.site_settings.OrganisationSettings.adresse_rue|default:"Adresse indisponible" }}<br>
+                    🏙️ {{ settings.site_settings.OrganisationSettings.adresse_code_postal|default:"Code postal" }}
+                    {{ settings.site_settings.OrganisationSettings.adresse_ville|default:"Ville" }},
+                    {{ settings.site_settings.OrganisationSettings.adresse_pays|default:"Pays" }}<br>
+                    📧 Email: {{ settings.site_settings.ContactSettings.email|default:"contact@example.com" }}<br>
+                    📲 Téléphone : {{ settings.site_settings.ContactSettings.telephone|default:"Numéro de téléphone" }}<br>
+                </address>
+                <div class="social-media">
+                    <p>Suivez-nous :</p>
+                    <div class="icons">
+                        {% if settings.site_settings.SocialMediaSettings.instagram_url %}
+                        <a href="{{ settings.site_settings.SocialMediaSettings.instagram_url }}" target="_blank" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        {% endif %}
+                        {% if settings.site_settings.SocialMediaSettings.linkedin_url %}
+                        <a href="{{ settings.site_settings.SocialMediaSettings.linkedin_url }}" target="_blank" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        {% endif %}
+                        {% if settings.site_settings.SocialMediaSettings.tiktok_url %}
+                        <a href="{{ settings.site_settings.SocialMediaSettings.tiktok_url }}" target="_blank" aria-label="TikTok">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Section horaires d'ouverture -->
+        {% if settings.layout.FooterSettings.display_opening_hours %}
+        <div class="flex-2 horaires">
+            <p class="h5">🕞 Horaires d'ouverture</p>
+            <ul>
+                {% if settings.site_settings.HorairesOuverture.horaires.exists %}
+                {% for horaire in settings.site_settings.HorairesOuverture.horaires.all %}
+                <li>{{ horaire.jour }} :
+                    {% if horaire.heure_debut and horaire.heure_fin %}
+                    {{ horaire.heure_debut }} - {{ horaire.heure_fin }}
+                    {% else %}
+                    Fermé
+                    {% endif %}
+                </li>
+                {% endfor %}
+                {% else %}
+                <li>Horaires non disponibles</li>
+                {% endif %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Menu 1 -->
+        {% if settings.layout.FooterSettings.selected_menu_1 %}
+        <div class="flex-1">
+            <p class="h5">{{ settings.layout.FooterSettings.selected_menu_1.title }}</p>
+            <ul>
+                {% for item in settings.layout.FooterSettings.selected_menu_1.items.all %}
+                <li>
+                    <a href="{{ item.get_url }}" class="link link-primary">{{ item.label }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Menu 2 -->
+        {% if settings.layout.FooterSettings.selected_menu_2 %}
+        <div class="flex-1">
+            <p class="h5">{{ settings.layout.FooterSettings.selected_menu_2.title }}</p>
+            <ul>
+                {% for item in settings.layout.FooterSettings.selected_menu_2.items.all %}
+                <li>
+                    <a href="{{ item.get_url }}" class="link link-primary">{{ item.label }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- Copyright -->
+    <hr class="dark my-4 opacity-50">
+    <section id="copyright_dev" style="padding:0.5rem;" class="bg-primary-light">
+        <p style="font-size:16px; font-family: inherit;">
+            Copyright &copy; {% now "Y" %} Fait avec ❤️
+            <a href="https://zatchouli.fr" class="link link-primary">Zatchouli</a>.
+        </p>
+    </section>
+</footer>

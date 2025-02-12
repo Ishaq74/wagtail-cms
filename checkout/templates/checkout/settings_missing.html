@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section>
+<h1>Configuration Manquante</h1>
+<p>{{ error_message }}</p>
+<a href="{% url 'checkout:checkout' %}">Retourner au checkout</a>
+</section>
+{% endblock %}

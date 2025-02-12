@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+{# <!-- Bannière pour la page d'article de blog --> #}
+{# {% with banner_title=page.title banner_summary=page.excerpt banner_image=page.featured_image banner_alt=page.title %} #}
+{#     {% include 'includes/banner_page.html' %} #}
+{# {% endwith %} #}
+
+{% if page.body %}
+    {% for block in page.body %}
+        {% include_block block %}
+    {% endfor %}
+{% endif %}
+
+{% if page.content %}
+<section>
+    <div class="content">
+        {{ page.content|richtext }}
+    </div>
+</section>
+{% endif %}
+
+{% if featured_articles %}
+<section class="featured-articles">
+    <h2>Articles en vedette</h2>
+
+    <div class="grid grid-4">
+        {% for article in featured_articles %}
+            <div class="card">
+                <a href="{{ article.url }}">
+                    {% if article.featured_image %}
+                        {% image article.featured_image fill-300x200 as img %}
+                        <img src="{{ img.url }}" class="card-img" alt="{{ article.title }}">
+                    {% endif %}
+                    <h3>{{ article.title }}</h3>
+                </a>
+                <p>{{ article.excerpt }}</p>
+                <span class="date">{{ article.date }}</span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination Controls for Featured Articles -->
+    {% if featured_pagination.paginator.num_pages > 1 %}
+        <div class="pagination">
+            {% if featured_pagination.has_previous %}
+                <a href="?page=1">&laquo; Première</a>
+                <a href="?page={{ featured_pagination.previous_page_number }}">Précédente</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ featured_pagination.number }} sur {{ featured_pagination.paginator.num_pages }}.
+            </span>
+
+            {% if featured_pagination.has_next %}
+                <a href="?page={{ featured_pagination.next_page_number }}">Suivante</a>
+                <a href="?page={{ featured_pagination.paginator.num_pages }}">Dernière &raquo;</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+{% endif %}
+
+<section class="blog-category-list">
+    <h2>Catégories du blog</h2>
+
+    {% if blogcategories %}
+        <div class="grid grid-4">
+            {% for category in blogcategories %}
+                <div class="card">
+                    <a href="{{ category.url }}">
+                        {% if category.specific.featured_image %}
+                            {% image category.specific.featured_image fill-300x200 as img %}
+                            <img src="{{ img.url }}" class="card-img" alt="{{ category.title }}">
+                        {% endif %}
+                        <h3>{{ category.title }}</h3>
+                    </a>
+                    <p>{{ category.specific.excerpt }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination Controls for Categories -->
+        {% if pagination.paginator.num_pages > 1 %}
+            <div class="pagination">
+                {% if pagination.has_previous %}
+                {% if pagination.paginator.num_pages > 2 %}
+                    <a href="?page=1">&laquo; Première</a>
+                    {% endif %}
+                    <a href="?page={{ pagination.previous_page_number }}">Précédente</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ pagination.number }} sur {{ pagination.paginator.num_pages }}.
+                </span>
+
+                {% if pagination.has_next  %}
+                    <a href="?page={{ pagination.next_page_number }}">Suivante</a>
+                {% if pagination.paginator.num_pages > 2 %}
+                    <a href="?page={{ pagination.paginator.num_pages }}">Dernière &raquo;</a>
+                {% endif %}
+
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <p>Aucune catégorie de blog trouvée.</p>
+    {% endif %}
+</section>
+
+{% endblock %}

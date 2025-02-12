@@ -1,0 +1,74 @@
+{# cart/templates/cart/cart_detail.html #}
+
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+    <section class="cart-page">
+        <h1>Votre Panier</h1>
+        
+        {% if not request.user.is_authenticated %}
+            <p>Session Key: {{ request.session.session_key }}</p>
+        {% endif %}
+        
+        {% if cart and cart.items.all %}
+            <table class="cart-table">
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Prix Unitaire</th>
+                        <th>Options</th>
+                        <th>Quantité</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart.items.all %}
+                        <tr>
+                            <td>
+                                <a href="{{ item.product.url }}">{{ item.product.title }}</a>
+                                {% if item.product.featured_image %}
+                                    <img src="{{ item.product.featured_image.file.url }}" alt="{{ item.product.featured_image.alt }}" class="cart-product-image">
+                                {% endif %}
+                            </td>
+                            <td>{{ item.product.price }} €</td>
+                            <td>
+                                {% if item.selected_options.all %}
+                                    <ul>
+                                        {% for option in item.selected_options.all %}
+                                            <li>{{ option.variant.name }}: {{ option.name }}{% if option.additional_price %} (+{{ option.additional_price }} €){% endif %}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>Aucune option sélectionnée</p>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form action="{% url 'cart:update_cart' item.id %}" method="post" class="quantity-form">
+                                    {% csrf_token %}
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" required>
+                                    <button type="submit">Mettre à jour</button>
+                                </form>
+                            </td>
+                            <td>{{ item.total_price }} €</td>
+                            <td>
+                                <form action="{% url 'cart:remove_from_cart' item.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-remove">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            <div class="cart-summary">
+                <p><strong>Total : {{ cart.total_price }} €</strong></p>
+                <a href="{% url 'cart:proceed_to_checkout' %}" class="btn btn-primary">Passer à la Caisse</a>
+            </div>
+        {% else %}
+            <p>Votre panier est vide.</p>
+        {% endif %}
+    </section>
+{% endblock %}

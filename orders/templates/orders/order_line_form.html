@@ -1,0 +1,13 @@
+<!-- orders/order_line_form.html -->
+
+{% extends "wagtailadmin/base.html" %}
+
+{% block content %}
+    <h1>Ajouter une ligne à la commande</h1>
+    
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Ajouter</button>
+    </form>
+{% endblock %}

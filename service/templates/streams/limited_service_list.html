@@ -1,0 +1,24 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section class="service-list">
+    {% if services %}
+    <div class="grid grid-{{ services|length }}">
+        {% for service in services %}
+        <div class="card">
+            {% if service.featured_image %}
+                {% image service.featured_image fill-300x200 as rendition %}
+                <img src="{{ rendition.url }}" alt="{{ service.title }}">
+            {% else %}
+                <img src="https://via.placeholder.com/300x200?text=No+Image" alt="{{ service.title }}">
+            {% endif %}
+            <h3>{{ service.title }}</h3>
+            <p>{{ service.summary }}</p>
+            <a href="{{ service.url }}" class="btn btn-primary">Voir le service</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>Aucun service trouvé.</p>
+    {% endif %}
+</section>
+

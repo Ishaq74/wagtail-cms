@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+
+<!-- Bannière pour la page Blog Category -->
+{% with banner_title=page.title banner_summary=page.summary banner_image=page.featured_image banner_alt=page.title %}
+    {% include 'includes/banner_page.html' %}
+{% endwith %}
+
+{% if page.body %}
+{% for block in page.body %}
+    {% include_block block %}
+{% endfor %}
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+
+    <!-- Bannière pour la page catégorie -->
+    {% with banner_title=page.title banner_summary=page.summary banner_image=page.featured_image banner_alt=page.title %}
+        {% include 'includes/banner_page.html' %}
+    {% endwith %}
+
+    <section class="service-category">
+        <div class="grid">
+            {{ page.content|richtext }}
+        </div>
+    </section>
+    
+    <!-- Affichage des blocs single_column, double_column, paginated_services, limited_services, siblings_service_list -->
+    {% if page.body %}
+        {% for block in page.body %}
+            {% include_block block %}
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}

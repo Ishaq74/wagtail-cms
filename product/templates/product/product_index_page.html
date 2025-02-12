@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+
+{# <!-- Bannière pour la page de la boutique --> #}
+{# {% with banner_title="Boutique" banner_summary=page.intro banner_image=page.featured_image banner_alt="Boutique" %} #}
+{#     {% include 'includes/banner_page.html' %} #}
+{# {% endwith %} #}
+
+{% if page.body %}
+    {% for block in page.body %}
+        {% include_block block %}
+    {% endfor %}
+{% endif %}
+
+{% if page.content %}
+<section>
+    <div class="content">
+        {{ page.content|richtext }}
+    </div>
+</section>
+{% endif %}
+
+{% if featured_products %}
+<section class="featured-products">
+    <h2>Produits en vedette</h2>
+
+    <div class="grid grid-4">
+        {% for product in featured_products %}
+            <div class="card">
+                <a href="{{ product.url }}">
+                    {% if product.featured_image %}
+                        {% image product.featured_image fill-300x200 as img %}
+                        <img src="{{ img.url }}" class="card-img" alt="{{ product.title }}">
+                    {% endif %}
+                    <h3>{{ product.title }}</h3>
+                </a>
+                <p>{{ product.excerpt }}</p>
+                <span class="price">{{ product.price }}</span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination Controls for Featured Products -->
+    {% if featured_pagination.paginator.num_pages > 1 %}
+        <div class="pagination">
+            {% if featured_pagination.has_previous %}
+                <a href="?page=1">&laquo; Première</a>
+                <a href="?page={{ featured_pagination.previous_page_number }}">Précédente</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ featured_pagination.number }} sur {{ featured_pagination.paginator.num_pages }}.
+            </span>
+
+            {% if featured_pagination.has_next %}
+                <a href="?page={{ featured_pagination.next_page_number }}">Suivante</a>
+                <a href="?page={{ featured_pagination.paginator.num_pages }}">Dernière &raquo;</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</section>
+{% endif %}
+
+<section class="product-category-list">
+    <h2>Catégories de Produits</h2>
+
+    {% if product_categories %}
+        <div class="grid grid-4">
+            {% for category in product_categories %}
+                <div class="card">
+                    <a href="{{ category.url }}">
+                        {% if category.specific.featured_image %}
+                            {% image category.specific.featured_image fill-300x200 as img %}
+                            <img src="{{ img.url }}" class="card-img" alt="{{ category.title }}">
+                        {% endif %}
+                        <h3>{{ category.title }}</h3>
+                    </a>
+                    <p>{{ category.specific.excerpt }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination Controls for Categories -->
+        {% if pagination.paginator.num_pages > 1 %}
+            <div class="pagination">
+                {% if pagination.has_previous %}
+                    {% if pagination.paginator.num_pages > 2 %}
+                        <a href="?page=1">&laquo; Première</a>
+                    {% endif %}
+                    <a href="?page={{ pagination.previous_page_number }}">Précédente</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ pagination.number }} sur {{ pagination.paginator.num_pages }}.
+                </span>
+
+                {% if pagination.has_next %}
+                    <a href="?page={{ pagination.next_page_number }}">Suivante</a>
+                    {% if pagination.paginator.num_pages > 2 %}
+                        <a href="?page={{ pagination.paginator.num_pages }}">Dernière &raquo;</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <p>Aucune catégorie de produit trouvée.</p>
+    {% endif %}
+</section>
+
+{% endblock %}

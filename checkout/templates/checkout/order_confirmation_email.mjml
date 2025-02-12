@@ -1,0 +1,25 @@
+<mjml lang="fr">
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-text font-size="20px" color="#F45E43">Merci pour votre commande #{{order_id}}.</mj-text>
+        <mj-text>Total : {{total}} {{currency}}</mj-text>
+        <mj-text>Option de paiement : {{payment_method}}</mj-text>
+
+        <mj-text>
+          {% if delivery_option == 'delivery' %}
+            Votre commande sera livrée à l'adresse suivante : {{delivery_address}}
+          {% elif delivery_option == 'pickup' %}
+            Votre commande sera prête à être récupérée à l'adresse suivante : {{organisation_nom}} - {{organisation_adresse_rue}} {{organisation_adresse_code_postal}} {{organisation_adresse_ville}} {{organisation_adresse_pays}}
+          {% else %}
+            Aucune option de livraison n'a été sélectionnée.
+          {% endif %}
+        </mj-text>
+
+        <mj-text>Commande passée le : {{order_date}}</mj-text>
+        <mj-text>Nom du client : {{user_name}}</mj-text>
+        <mj-text>{{organisation_nom}} - {{organisation_adresse_rue}} {{organisation_adresse_code_postal}} {{organisation_adresse_ville}} {{organisation_adresse_pays}}</mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

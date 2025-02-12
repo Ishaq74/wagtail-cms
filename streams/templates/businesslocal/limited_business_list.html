@@ -1,0 +1,25 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section class="business-list">
+    {% if heading %} {% include_block heading %} {% endif %}
+    {% if paragraph %} {% include_block paragraph %} {% endif %}
+
+    {% if businesses %}
+        <div class="grid grid-{{ businesses|length }}">
+            {% for business in businesses %}
+                <div class="card">
+                    <a href="{{ business.url }}">
+                        {% if business.featured_image %}
+                            {% image business.featured_image fill-300x200 as img %}
+                            <img src="{{ img.url }}" class="card-img" alt="{{ business.title }}">
+                        {% endif %}
+                        <h3>{{ business.title }}</h3>
+                    </a>
+                    <p>{{ business.address }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Aucune entreprise trouvée.</p>
+    {% endif %}
+</section>

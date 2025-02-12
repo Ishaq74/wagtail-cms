@@ -1,0 +1,6 @@
+{% load wagtailimages_tags %}
+
+<figure class="text-{{ self.alignment }} image-{{ self.size }} spacing-{{ self.spacing }}">
+    {% image self.image original as img %}
+        <img src="{{ img.url }}" alt="{{ self.alt_text }}" loading="{{ self.loading }}">
+</figure>

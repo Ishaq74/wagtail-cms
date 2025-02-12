@@ -1,0 +1,24 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section class="siblings-services">
+    <h2>Autres services similaires</h2>
+    {% if siblings_services %}
+        <div class="grid grid-{{ siblings_services|length }}">
+            {% for sibling in siblings_services %}
+                <div class="card">
+                    {% if sibling.featured_image %}
+                        {% image sibling.featured_image fill-300x200 as rendition %}
+                        <img src="{{ rendition.url }}" alt="{{ sibling.title }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300x200?text=No+Image" alt="{{ sibling.title }}">
+                    {% endif %}
+                    <h3>{{ sibling.title }}</h3>
+                    <p>{{ sibling.summary }}</p>
+                    <a href="{{ sibling.url }}" class="btn btn-secondary">Voir le service</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Aucun service similaire trouvé.</p>
+    {% endif %}
+</section>

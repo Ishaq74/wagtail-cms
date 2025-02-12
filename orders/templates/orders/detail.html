@@ -1,0 +1,30 @@
+{% extends "wagtailadmin/base.html" %}
+
+{% block content %}
+{% include "wagtailadmin/shared/header.html" with title="Détail de la Commande" icon="clipboard-list" %}
+
+  <h1>Commande {{ order.id }}</h1>
+  <p>Client : {{ order.customer_name }} ({{ order.email }})</p>
+  <p>Adresse de facturation : {{ order.billing_address }}</p>
+  <p>Adresse de livraison : {{ order.shipping_address }}</p>
+  <p>Total HT : {{ order.total_ht }}</p>
+  <p>Total TVA : {{ order.total_tva }}</p>
+  <p>Total TTC : {{ order.total_ttc }}</p>
+  <p>Option de livraison : {{ order.shipping_option }}</p>
+  <p>Frais de livraison : {{ order.shipping_cost }}</p>
+  <p>Étiquette de livraison : {{ order.shipping_label }}</p>
+  <p>Pays : {{ order.country }}</p>
+  <p>Statut : {{ order.status }}</p>
+  <p>Facturé : {{ order.is_invoiced }}</p>
+  <p>Payé : {{ order.is_payed }}</p>
+  <h2>Lignes de commande</h2>
+  <ul>
+    {% for line in lines %}
+      <li>
+        {{ line.product }} ({{ line.variant }})
+        {{ line.quantity }} x {{ line.unit_price_ht }} HT
+        {{ line.unit_price_ttc }} TTC
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% for item in menu_items %}
+<li class="menu-item {% if item.children.exists %}has-children{% endif %}">
+    <a href="{{ item.link }}" {% if item.open_in_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}>
+        {% if item.icon %}<i class="{{ item.icon }}"></i>{% endif %}
+        <span>{{ item.title }}</span>
+    </a>
+
+    {% if item.children.exists %}
+    <ul class="submenu">
+        {% include "includes/menu_item.html" with menu_items=item.children %}
+    </ul>
+    {% endif %}
+</li>
+{% endfor %}

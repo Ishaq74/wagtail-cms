@@ -1,0 +1,153 @@
+{% load static wagtailimages_tags navigation_tags %}
+
+<header id="header" name="header" class="header">
+
+<!-- Logo -->
+<a href="/" class="title_and_logo" aria-label="Accueil">
+{% if settings.layout.HeaderSettings.display_logo and settings.site_settings.MediaSettings.logo %}
+{% image settings.site_settings.MediaSettings.logo fill-100x100 as logo_rendition %}
+<img class="logo" src="{{ logo_rendition.url }}" 
+        alt="{{ settings.site_settings.MediaSettings.logo_alt|default:'Logo de l\'entreprise' }}">
+{% endif %}
+
+<!-- Site Title -->
+{% if settings.layout.HeaderSettings.display_site_title %}
+<span class="title">{{ settings.site_settings.OrganisationSettings.nom_entreprise }}</span>
+{% endif %}
+</a>
+
+{% if settings.layout.HeaderSettings.display_menu and settings.layout.HeaderSettings.selected_menu %}
+<nav id="header-navigation" name="header-navigation" class="navbar">
+<ul>
+{% get_menu_items settings.layout.HeaderSettings.selected_menu.title as menu_items %}
+{% if menu_items %}
+{% for item in menu_items %}
+<li class="{% if item.children.exists %}has-dropdown{% endif %}">
+    <a class="link link-primary" href="{{ item.get_url }}" 
+       aria-haspopup="{% if item.children.exists %}true{% else %}false{% endif %}" 
+       aria-expanded="false">
+        {{ item.label }}
+        {% if item.children.exists %}
+        <span class="dropdown-chevron">▼</span>
+        {% endif %}
+    </a>
+    {% if item.children.exists %}
+    <ul class="dropdown" role="menu">
+        {% for child in item.children.all %}
+        <li><a class="link link-primary" href="{{ child.get_url }}" role="menuitem">{{ child.label }}</a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</li>
+{% endfor %}
+{% else %}
+<li><a href="#">Menu Vide</a></li>
+{% endif %}
+</ul>
+</nav>
+{% else %}
+<p>Menu non configuré.</p>
+{% endif %}
+
+
+<div class="icons">
+    {% if settings.layout.HeaderSettings.display_cta_button %}
+    <a href="{{ settings.layout.HeaderSettings.cta_button_url }}" 
+       class="header_cta-button btn btn-primary"
+       {% if settings.layout.HeaderSettings.open_in_new_tab %}target="_blank" rel="noopener noreferrer"{% endif %}>
+        {{ settings.layout.HeaderSettings.cta_button_text }}
+    </a>
+    {% endif %}
+<div class="fas fa-bars" id="menu-btn"></div>
+<div class="fas fa-search" id="search-btn"></div>
+{% if settings.layout.HeaderSettings.display_cart_icon %}
+<a href="{% url 'cart:cart_detail' %}" id="cart-button" class="header_cart" aria-haspopup="dialog" aria-expanded="false">
+<div class="fas fa-shopping-cart" id="cart-btn">
+<span id="cart-count" class="header_cart-count">0</span>
+</div>
+</a>
+{% endif %}
+
+{% if settings.layout.HeaderSettings.display_account_icon %}
+<div class="dropdown-profile">
+{% if user.is_authenticated %}
+<div class="fas fa-user" id="profile-btn"></div>
+<ul class="dropdown">
+<li><a href="{% url 'accounts:profile' %}" class="link link-primary">Profil</a></li>
+<li>
+    <form action="{% url 'accounts:logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-secondary">
+            <i class="fas fa-sign-out-alt"></i> Déconnexion
+        </button>
+    </form>
+</li>
+</ul>
+{% else %}
+<a href="{% url 'accounts:login' %}" class="header_account">
+<div class="fas fa-user"></div>
+</a>
+{% endif %}
+</div>
+{% endif %}
+
+{% if settings.layout.HeaderSettings.display_search_button %}
+<form action="" class="search-form">
+<input type="search" id="search-box" placeholder="Rechercher...">
+<label for="search-box" class="fas fa-search"></label>
+</form>
+{% endif %}
+
+</header>
+
+<script>
+let searchForm = document.querySelector('.search-form');
+
+document.querySelector('#search-btn').onclick = ()=>{
+searchForm.classList.toggle('active');
+shoppingCart.classList.remove('active');
+loginForm.classList.remove('active');
+navbar.classList.remove('active');
+
+}
+
+let navbar = document.querySelector('.navbar');
+
+document.querySelector('#menu-btn').onclick = () =>{
+navbar.classList.toggle('active');
+searchForm.classList.remove('active');
+shoppingCart.classList.remove('active');
+loginForm.classList.remove('active');
+}
+
+// Dropdown handling for mobile
+const dropdownLinks = document.querySelectorAll('.navbar .has-dropdown > a');
+
+dropdownLinks.forEach(link => {
+    link.addEventListener('click', function (e) {
+        const parent = this.parentElement;
+        const dropdown = parent.querySelector('.dropdown');
+
+        if (dropdown) {
+            e.preventDefault();
+            const isOpen = parent.classList.contains('open');
+            document.querySelectorAll('.navbar .has-dropdown.open').forEach(item => {
+                item.classList.remove('open');
+            });
+            if (!isOpen) {
+                parent.classList.add('open');
+            }
+        }
+    });
+});
+
+// Close dropdowns on outside click
+document.addEventListener('click', function (e) {
+    const isDropdown = e.target.closest('.has-dropdown');
+    if (!isDropdown) {
+        document.querySelectorAll('.navbar .has-dropdown.open').forEach(item => {
+            item.classList.remove('open');
+        });
+    }
+});
+</script>

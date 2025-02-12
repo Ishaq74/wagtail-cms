@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+<!-- Bannière pour la page d'entreprise locale -->
+{% with banner_title=page.title banner_summary=page.content banner_image=page.featured_image banner_alt=page.title %}
+    {% include 'includes/banner_page.html' %}
+{% endwith %}
+
+<section>
+    <p><strong>Adresse :</strong> {{ page.address }}</p>
+    <p><strong>Téléphone :</strong> {{ page.phone_number }}</p>
+    <p><strong>Email :</strong> <a href="mailto:{{ page.email }}">{{ page.email }}</a></p>
+    <p><strong>Site Web :</strong> <a href="{{ page.website }}">{{ page.website }}</a></p>
+
+    {% if page.google_maps_link %}
+        <p><strong>Google Maps :</strong> <a href="{{ page.google_maps_link }}" target="_blank">Voir sur Google Maps</a></p>
+    {% endif %}
+</section>
+
+<section>
+    <h2>Horaires d'ouverture</h2>
+    <div>
+        {% for block in page.opening_hours %}
+            <div>
+                <strong>
+                    {% if block.value.day == 'monday' %} Lundi
+                    {% elif block.value.day == 'tuesday' %} Mardi
+                    {% elif block.value.day == 'wednesday' %} Mercredi
+                    {% elif block.value.day == 'thursday' %} Jeudi
+                    {% elif block.value.day == 'friday' %} Vendredi
+                    {% elif block.value.day == 'saturday' %} Samedi
+                    {% elif block.value.day == 'sunday' %} Dimanche
+                    {% endif %}
+                    :
+                </strong>
+                {% if block.value.closed %}
+                    <span>Fermé</span>
+                {% else %}
+                    <span>{{ block.value.open_time }} - {{ block.value.close_time }}</span>
+                    {% if block.value.second_open_time and block.value.second_close_time %}
+                        | <span>{{ block.value.second_open_time }} - {{ block.value.second_close_time }}</span>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section>
+    <h2>Galerie</h2>
+    <div class="grid grid-4">
+        {% for gallery_image in page.gallery_images.all %}
+            {% image gallery_image.image fill-300x200 as rendition %}
+            <img src="{{ rendition.url }}" alt="{{ gallery_image.caption }}">
+            {% if gallery_image.caption %}
+                <p>{{ gallery_image.caption }}</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+</section>
+
+<section>
+    <h2>Entreprises liées</h2>
+    <div class="grid grid-4">
+        {% for related in related_businesses %}
+            <article class="card">
+                {% if related.featured_image %}
+                    {% image related.featured_image fill-300x200 as rendition %}
+                    <img src="{{ rendition.url }}" alt="{{ related.title }}">
+                {% else %}
+                    <img src="https://via.placeholder.com/300x200?text=No+Image" alt="{{ related.title }}">
+                {% endif %}
+                <div class="card-content">
+                    <h3>{{ related.title }}</h3>
+                    <a href="{{ related.url }}" class="btn btn-primary">Voir l'entreprise</a>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+
+{% if page.body %}
+    {% for block in page.body %}
+        {% include_block block %}
+    {% endfor %}
+{% endif %}
+
+{% endblock %}

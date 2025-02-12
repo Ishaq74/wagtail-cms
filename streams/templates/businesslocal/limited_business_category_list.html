@@ -1,0 +1,25 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+<section class="business-category-list">
+    {% if heading %} {% include_block heading %} {% endif %}
+    {% if paragraph %} {% include_block paragraph %} {% endif %}
+
+    {% if categories %}
+        <div class="grid grid-{{ categories|length }}">
+            {% for category in categories %}
+                <div class="card">
+                    <a href="{{ category.url }}">
+                        {% if category.featured_image %}
+                            {% image category.featured_image fill-300x200 as img %}
+                            <img src="{{ img.url }}" class="card-img" alt="{{ category.title }}">
+                        {% endif %}
+                        <h3>{{ category.title }}</h3>
+                    </a>
+                    <p>{{ category.summary }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Aucune catégorie trouvée.</p>
+    {% endif %}
+</section>

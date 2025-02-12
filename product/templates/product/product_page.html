@@ -1,0 +1,97 @@
+{# product/templates/product_page.html #}
+
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block content %}
+
+{% with banner_title=page.title banner_summary=page.summary banner_image=page.featured_image banner_alt=page.title %}
+    {% include 'includes/banner_page.html' %}
+{% endwith %}
+
+<section class="product-page">
+    <div class="grid grid-2">
+        {% if page.featured_image %}
+        <div class="card">
+            {% image page.featured_image fill-800x600 as img %}
+            <img src="{{ img.url }}" alt="{{ page.title }}">
+        </div>
+    {% endif %}
+        <div class="card">
+            <h1>{{ page.title }}</h1>
+            <p><strong>Prix :</strong> {{ page.price }} €</p>
+            {% if page.sku %}
+                <p><strong>Référence :</strong> {{ page.sku }}</p>
+            {% endif %}
+            <div class="product-summary">
+                {{ page.summary|richtext }}
+            </div>
+            <div class="product-content">
+                {{ page.content|richtext }}
+            </div>
+
+            {% if page.categories.exists %}
+                <p><strong>Catégories :</strong>
+                    {% for category in page.categories.all %}
+                        <a href="{{ category.url }}">{{ category.title }}</a>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+            {% endif %}
+            {% if page.tags.all %}
+                <p><strong>Tags :</strong>
+                    {% for tag in page.tags.all %}
+                        {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+            {% endif %}
+
+            <!-- Formulaire d'ajout au panier toujours affiché -->
+            <form action="{% url 'cart:add_to_cart' page.id %}" method="post" class="add-to-cart-form">
+                {% csrf_token %}
+                
+                {% if page.variants %}
+                    {% for variant_block in page.variants %}
+                        {% with variant=variant_block.value.variant %}
+                            <div class="product-variant">
+                                <h2>{{ variant.name }}</h2>
+                                <div class="grid grid-3">
+                                    {% for option in variant.options.all %}
+                                        <div class="card">
+                                            <label>
+                                                <input type="radio" name="variant_{{ variant.id }}" value="{{ option.id }}" {% if forloop.first %}required{% endif %}>
+                                                {% if option.image %}
+                                                    {% image option.image fill-200x200 as option_img %}
+                                                    <img src="{{ option_img.url }}" alt="{{ option.name }}">
+                                                {% endif %}
+                                                <p>{{ option.name }}</p>
+                                                {% if option.additional_price %}
+                                                    <p>+ {{ option.additional_price }} €</p>
+                                                {% endif %}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endwith %}
+                    {% endfor %}
+                {% endif %}
+                
+                <!-- Bouton pour ajouter au panier -->
+                {% if page.is_available %}
+                <p><em>Produit disponible</em></p>
+                <button type="submit" class="btn btn-primary">Ajouter au panier</button>
+            {% else %}
+                <p><em>Produit indisponible</em></p>
+            {% endif %}
+            </form>
+        </div>
+    </div>
+
+    {% if page.body %}
+        {% for block in page.body %}
+            {% include_block block %}
+        {% endfor %}
+    {% endif %}
+</section>
+
+{% endblock %}

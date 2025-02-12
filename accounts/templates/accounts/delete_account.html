@@ -1,0 +1,12 @@
+<!-- templates/accounts/delete_account.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Supprimer mon compte</h2>
+<p>Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Supprimer mon compte</button>
+</form>
+{% endblock %}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prévisualisation de la commande {{ order.id }}</title>
+</head>
+<body>
+    <h1>Prévisualisation de la commande #{{ order.id }}</h1>
+    
+    <h2>Informations sur le client</h2>
+    <p><strong>Nom du client:</strong> {{ order.customer_name }}</p>
+    <p><strong>Date de la Commande:</strong> {{ order.order_date }}</p>
+    <p><strong>Devise:</strong> {{ order.currency }}</p>
+    <p><strong>Taux de change:</strong> {{ order.currency_rate }}</p>
+
+    <p><strong>Email:</strong> {{ order.email }}</p>
+    <p><strong>Adresse de facturation:</strong> {{ order.billing_address }}</p>
+    <p><strong>Pays:</strong> {{ order.country }}</p>
+
+    <h2>Détails de la commande</h2>
+    <p><strong>Statut:</strong> {{ order.status }}</p>
+    <p><strong>Total HT:</strong> {{ order.local_total_ht }} €</p>
+    <p><strong>Total TVA:</strong> {{ order.local_total_tva }} €</p>
+    <p><strong>Total TTC:</strong> {{ order.local_total_ttc }} €</p>
+    <p><strong>Option d'expédition:</strong> {{ order.shipping_option }}</p>
+    <p><strong>Coût de livraison:</strong> {{ order.shipping_cost }} €</p>
+    
+    <h2>Lignes de commande</h2>
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th>Option de variante</th>
+                <th>Quantité</th>
+                <th>Prix unitaire HT</th>
+                <th>Total HT</th>
+                <th>Total TVA</th>
+                <th>Total TTC</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for line in order.lines.all %}
+                <tr>
+                    <td>{{ line.product.title }}</td>
+                    <td>
+                        {% for variant in line.variant_option.all %}
+                            {{ variant.name }}<br>
+                        {% endfor %}
+                    </td>
+                    <td>{{ line.quantity }}</td>
+                    <td>{{ line.unit_price_ht }} €</td>
+                    <td>{{ line.calculate_ht }} €</td>
+                    <td>{{ line.calculate_tva }} €</td>
+                    <td>{{ line.calculate_ttc }} €</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <h2>Informations sur l'expédition</h2>
+    <p><strong>Étiquette d'expédition:</strong> {{ order.shipping_label }}</p>
+</body>
+</html>
