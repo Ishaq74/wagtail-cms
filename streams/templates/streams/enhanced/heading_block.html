@@ -1,0 +1,11 @@
+{% load wagtailcore_tags %}
+
+{# Enhanced heading block template with design system integration #}
+<{{ value.heading_level }} 
+    class="heading-{{ value.size }} font-{{ value.font_weight }} {{ block.get_css_classes }}{% if value.color %} text-{{ value.color }}{% endif %}{% if value.alignment %} text-{{ value.alignment }}{% endif %}{% if value.spacing %} mb-{{ value.spacing }}{% endif %}{% if value.animation != 'none' %} animate-{{ value.animation }}{% if value.animation_delay != '0' %} animate-delay-{{ value.animation_delay }}{% endif %}{% endif %}"
+    {% if value.aria_label %}aria-label="{{ value.aria_label }}"{% endif %}
+    {% if value.tab_index %}tabindex="{{ value.tab_index }}"{% endif %}
+    id="{{ block.get_block_id }}"
+>
+    {{ value.heading_text }}
+</{{ value.heading_level }}>

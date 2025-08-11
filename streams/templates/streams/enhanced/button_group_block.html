@@ -1,0 +1,10 @@
+{% load wagtailcore_tags %}
+
+{# Enhanced button group template #}
+<div class="button-group button-group-{{ value.layout }}{% if value.gap %} gap-{{ value.gap }}{% endif %}{% if value.alignment %} text-{{ value.alignment }}{% endif %}{% if value.spacing %} mb-{{ value.spacing }}{% endif %}{% if value.animation != 'none' %} animate-{{ value.animation }}{% if value.animation_delay != '0' %} animate-delay-{{ value.animation_delay }}{% endif %}{% endif %}"
+     id="{{ block.get_block_id }}">
+    
+    {% for button in value.buttons %}
+        {% include_block button %}
+    {% endfor %}
+</div>

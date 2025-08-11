@@ -1,0 +1,38 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{# Enhanced image block with responsive features #}
+<figure class="image-block image-{{ value.sizes }}{% if value.alignment %} text-{{ value.alignment }}{% endif %}{% if value.spacing %} mb-{{ value.spacing }}{% endif %}{% if value.animation != 'none' %} animate-{{ value.animation }}{% if value.animation_delay != '0' %} animate-delay-{{ value.animation_delay }}{% endif %}{% endif %}"
+        id="{{ block.get_block_id }}">
+    
+    {% if value.link %}
+        <a href="{{ value.link }}" {% if value.link|slice:":4" == "http" %}target="_blank" rel="noopener"{% endif %}>
+    {% endif %}
+    
+    <div class="image-container{% if value.aspect_ratio != 'auto' %} aspect-{{ value.aspect_ratio }}{% endif %}">
+        {% image value.image fill-1200x600 as image_desktop %}
+        {% image value.image fill-768x384 as image_tablet %}
+        {% image value.image fill-480x240 as image_mobile %}
+        
+        <picture>
+            <source media="(min-width: 768px)" srcset="{{ image_desktop.url }}">
+            <source media="(min-width: 480px)" srcset="{{ image_tablet.url }}">
+            <img 
+                src="{{ image_mobile.url }}" 
+                alt="{{ value.alt_text|default:value.image.title }}"
+                loading="{{ value.loading }}"
+                class="w-full h-auto object-cover"
+                {% if value.aspect_ratio != 'auto' %}style="aspect-ratio: var(--aspect-{{ value.aspect_ratio }})"{% endif %}
+            >
+        </picture>
+    </div>
+    
+    {% if value.link %}
+        </a>
+    {% endif %}
+    
+    {% if value.caption %}
+        <figcaption class="image-caption text-sm text-neutral-600 mt-2{% if value.alignment %} text-{{ value.alignment }}{% endif %}">
+            {{ value.caption }}
+        </figcaption>
+    {% endif %}
+</figure>
