@@ -1,0 +1,46 @@
+{% load wagtailcore_tags %}
+
+{# Enhanced container block template #}
+<section class="container-block container-{{ value.container_width }}{% if value.background != 'none' %} container-bg-{{ value.background }}{% endif %}{% if value.spacing %} mb-{{ value.spacing }}{% endif %}{% if value.animation != 'none' %} animate-{{ value.animation }}{% if value.animation_delay != '0' %} animate-delay-{{ value.animation_delay }}{% endif %}{% endif %}"
+         id="{{ block.get_block_id }}">
+    
+    {% if value.background == 'image' and value.background_image %}
+        {# Background image container #}
+        {% load wagtailimages_tags %}
+        {% image value.background_image fill-1920x1080 as bg_image %}
+        <div class="container-background relative overflow-hidden"
+             style="background-image: url('{{ bg_image.url }}'); background-size: cover; background-position: center; background-attachment: fixed;">
+            <div class="container-overlay absolute inset-0 bg-black/50"></div>
+            <div class="container-inner relative z-10 py-12 md:py-16 lg:py-20">
+                {% for block in value.content %}
+                    {% include_block block %}
+                {% endfor %}
+            </div>
+        </div>
+    {% elif value.background == 'light' %}
+        <div class="container-inner bg-neutral-50 dark:bg-neutral-800 py-12 md:py-16 lg:py-20">
+            {% for block in value.content %}
+                {% include_block block %}
+            {% endfor %}
+        </div>
+    {% elif value.background == 'dark' %}
+        <div class="container-inner bg-neutral-900 dark:bg-neutral-700 text-white py-12 md:py-16 lg:py-20">
+            {% for block in value.content %}
+                {% include_block block %}
+            {% endfor %}
+        </div>
+    {% elif value.background == 'primary' %}
+        <div class="container-inner bg-primary-600 text-white py-12 md:py-16 lg:py-20">
+            {% for block in value.content %}
+                {% include_block block %}
+            {% endfor %}
+        </div>
+    {% else %}
+        {# No background #}
+        <div class="container-inner py-12 md:py-16 lg:py-20">
+            {% for block in value.content %}
+                {% include_block block %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>

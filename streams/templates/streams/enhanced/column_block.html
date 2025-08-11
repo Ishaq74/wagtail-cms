@@ -1,0 +1,42 @@
+{% load wagtailcore_tags %}
+
+{# Enhanced column block template #}
+<section class="column-block{% if value.spacing %} mb-{{ value.spacing }}{% endif %}{% if value.animation != 'none' %} animate-{{ value.animation }}{% if value.animation_delay != '0' %} animate-delay-{{ value.animation_delay }}{% endif %}{% endif %}"
+         id="{{ block.get_block_id }}">
+    
+    <div class="columns-container
+                {% if value.gap == 'none' %}gap-0{% endif %}
+                {% if value.gap == 'sm' %}gap-4{% endif %}
+                {% if value.gap == 'md' %}gap-6{% endif %}
+                {% if value.gap == 'lg' %}gap-8{% endif %}
+                {% if value.gap == 'xl' %}gap-12{% endif %}
+                {% if value.vertical_alignment == 'top' %}items-start{% endif %}
+                {% if value.vertical_alignment == 'center' %}items-center{% endif %}
+                {% if value.vertical_alignment == 'bottom' %}items-end{% endif %}
+                {% if value.vertical_alignment == 'stretch' %}items-stretch{% endif %}
+                
+                {# Column layout classes #}
+                {% if value.columns|length == 2 %}
+                    flex flex-col lg:flex-row
+                    {% if value.column_layout == 'equal' %}lg:[&>*]:flex-1{% endif %}
+                    {% if value.column_layout == '2-1' %}lg:[&>*:first-child]:flex-[2] lg:[&>*:last-child]:flex-[1]{% endif %}
+                    {% if value.column_layout == '1-2' %}lg:[&>*:first-child]:flex-[1] lg:[&>*:last-child]:flex-[2]{% endif %}
+                {% elif value.columns|length == 3 %}
+                    flex flex-col lg:flex-row
+                    {% if value.column_layout == 'equal' %}lg:[&>*]:flex-1{% endif %}
+                    {% if value.column_layout == '1-2-1' %}lg:[&>*:first-child]:flex-[1] lg:[&>*:nth-child(2)]:flex-[2] lg:[&>*:last-child]:flex-[1]{% endif %}
+                {% elif value.columns|length == 4 %}
+                    grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4
+                {% else %}
+                    flex flex-col lg:flex-row lg:[&>*]:flex-1
+                {% endif %}">
+        
+        {% for column in value.columns %}
+            <div class="column-item">
+                {% for block in column %}
+                    {% include_block block %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+</section>
