@@ -1,0 +1,30 @@
+{% load wagtailcore_tags %}
+
+{# Enhanced button block template #}
+<div class="button-wrapper{% if value.alignment %} text-{{ value.alignment }}{% endif %}{% if value.spacing %} mb-{{ value.spacing }}{% endif %}{% if value.animation != 'none' %} animate-{{ value.animation }}{% if value.animation_delay != '0' %} animate-delay-{{ value.animation_delay }}{% endif %}{% endif %}"
+     id="{{ block.get_block_id }}">
+    
+    {% with link_attrs=block.get_link_attributes %}
+        <a href="{{ link_attrs.href }}"
+           class="btn btn-{{ value.style }} btn-{{ value.size }}{% if value.full_width %} btn-full{% endif %}{% if value.icon %} btn-with-icon{% endif %}"
+           {% if link_attrs.target %}target="{{ link_attrs.target }}"{% endif %}
+           {% if link_attrs.rel %}rel="{{ link_attrs.rel }}"{% endif %}
+           {% if link_attrs.aria-label %}aria-label="{{ link_attrs.aria-label }}"{% endif %}
+           {% if value.tab_index %}tabindex="{{ value.tab_index }}"{% endif %}>
+            
+            {% if value.icon and value.icon_position == 'left' %}
+                <span class="btn-icon btn-icon-left" aria-hidden="true">
+                    {% include "components/icons.html" with icon=value.icon %}
+                </span>
+            {% endif %}
+            
+            <span class="btn-text">{{ value.text }}</span>
+            
+            {% if value.icon and value.icon_position == 'right' %}
+                <span class="btn-icon btn-icon-right" aria-hidden="true">
+                    {% include "components/icons.html" with icon=value.icon %}
+                </span>
+            {% endif %}
+        </a>
+    {% endwith %}
+</div>

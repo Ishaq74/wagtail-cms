@@ -1,0 +1,44 @@
+{% load wagtailcore_tags %}
+
+{# Enhanced call-to-action block template #}
+<section class="cta-block cta-{{ value.background_style }}{% if value.spacing %} mb-{{ value.spacing }}{% endif %}{% if value.animation != 'none' %} animate-{{ value.animation }}{% if value.animation_delay != '0' %} animate-delay-{{ value.animation_delay }}{% endif %}{% endif %}"
+         id="{{ block.get_block_id }}">
+    
+    {% if value.background_style == 'none' %}
+        <div class="cta-content py-12 md:py-16">
+    {% elif value.background_style == 'light' %}
+        <div class="cta-content bg-neutral-50 dark:bg-neutral-800 py-12 md:py-16 rounded-xl">
+    {% elif value.background_style == 'dark' %}
+        <div class="cta-content bg-neutral-900 dark:bg-neutral-700 text-white py-12 md:py-16 rounded-xl">
+    {% elif value.background_style == 'primary' %}
+        <div class="cta-content bg-primary-600 text-white py-12 md:py-16 rounded-xl">
+    {% elif value.background_style == 'gradient' %}
+        <div class="cta-content gradient-primary text-white py-12 md:py-16 rounded-xl">
+    {% else %}
+        <div class="cta-content py-12 md:py-16">
+    {% endif %}
+    
+        <div class="container-standard text-center">
+            {# Heading #}
+            <h2 class="heading-2xl mb-4{% if value.color and value.background_style == 'none' %} text-{{ value.color }}{% endif %}">
+                {{ value.heading }}
+            </h2>
+            
+            {# Description #}
+            {% if value.description %}
+                <div class="cta-description text-lg mb-8 max-w-2xl mx-auto{% if value.background_style == 'dark' or value.background_style == 'primary' or value.background_style == 'gradient' %} text-white/90{% else %} text-neutral-600 dark:text-neutral-300{% endif %}">
+                    {{ value.description|linebreaksbr }}
+                </div>
+            {% endif %}
+            
+            {# Action Buttons #}
+            {% if value.button %}
+                <div class="cta-buttons flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    {% for button in value.button %}
+                        {% include_block button %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>

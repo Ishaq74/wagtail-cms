@@ -1,0 +1,176 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{# Enhanced gallery block template with modern features #}
+<section class="gallery-block{% if value.spacing %} mb-{{ value.spacing }}{% endif %}{% if value.animation != 'none' %} animate-{{ value.animation }}{% if value.animation_delay != '0' %} animate-delay-{{ value.animation_delay }}{% endif %}{% endif %}"
+         id="{{ block.get_block_id }}">
+    
+    {% if value.layout == 'carousel' %}
+        {# Carousel Layout #}
+        <div class="gallery-carousel relative overflow-hidden rounded-lg">
+            <div class="gallery-slides flex transition-transform duration-300" id="gallery-{{ block.get_block_id }}-slides">
+                {% for item in value.images %}
+                    <div class="gallery-slide flex-shrink-0 w-full">
+                        {% image item.image fill-1200x800 as slide_image %}
+                        <img src="{{ slide_image.url }}" 
+                             alt="{{ item.alt_text|default:item.image.title }}"
+                             class="w-full h-64 md:h-96 object-cover">
+                        {% if item.caption %}
+                            <div class="gallery-caption absolute bottom-0 left-0 right-0 bg-black/75 text-white p-4">
+                                <p class="text-sm">{{ item.caption }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            {# Carousel controls #}
+            <button class="gallery-prev absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/80 dark:bg-black/80 p-2 rounded-full shadow-lg hover:bg-white dark:hover:bg-black transition-colors" 
+                    onclick="galleryPrev('gallery-{{ block.get_block_id }}-slides')">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+            
+            <button class="gallery-next absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/80 dark:bg-black/80 p-2 rounded-full shadow-lg hover:bg-white dark:hover:bg-black transition-colors" 
+                    onclick="galleryNext('gallery-{{ block.get_block_id }}-slides')">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+            
+            {# Carousel indicators #}
+            <div class="gallery-indicators absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                {% for item in value.images %}
+                    <button class="w-3 h-3 rounded-full bg-white/60 hover:bg-white transition-colors {% if forloop.first %}bg-white{% endif %}"
+                            onclick="galleryGoTo('gallery-{{ block.get_block_id }}-slides', {{ forloop.counter0 }})"></button>
+                {% endfor %}
+            </div>
+        </div>
+        
+    {% elif value.layout == 'masonry' %}
+        {# Masonry Layout #}
+        <div class="gallery-masonry columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4">
+            {% for item in value.images %}
+                <div class="gallery-item break-inside-avoid mb-4">
+                    {% if value.enable_lightbox %}
+                        <a href="{{ item.image.file.url }}" class="lightbox-trigger block" 
+                           data-lightbox="gallery-{{ block.get_block_id }}"
+                           data-title="{{ item.caption|default:item.alt_text|default:item.image.title }}">
+                    {% endif %}
+                    
+                    {% image item.image width-400 as masonry_image %}
+                    <img src="{{ masonry_image.url }}" 
+                         alt="{{ item.alt_text|default:item.image.title }}"
+                         loading="lazy"
+                         class="w-full h-auto rounded-lg hover:shadow-lg transition-shadow duration-300">
+                    
+                    {% if value.enable_lightbox %}
+                        </a>
+                    {% endif %}
+                    
+                    {% if item.caption %}
+                        <p class="gallery-caption text-sm text-neutral-600 dark:text-neutral-300 mt-2 px-1">
+                            {{ item.caption }}
+                        </p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        
+    {% else %}
+        {# Grid Layout (default) #}
+        <div class="gallery-grid grid gap-4 
+                    {% if value.columns == '1' %}grid-cols-1{% endif %}
+                    {% if value.columns == '2' %}grid-cols-1 sm:grid-cols-2{% endif %}
+                    {% if value.columns == '3' %}grid-cols-1 sm:grid-cols-2 lg:grid-cols-3{% endif %}
+                    {% if value.columns == '4' %}grid-cols-2 md:grid-cols-3 lg:grid-cols-4{% endif %}
+                    {% if value.columns == 'auto' %}grid-cols-auto{% endif %}">
+            
+            {% for item in value.images %}
+                <div class="gallery-item relative group overflow-hidden rounded-lg
+                            {% if value.aspect_ratio != 'auto' %}aspect-{{ value.aspect_ratio }}{% endif %}">
+                    
+                    {% if value.enable_lightbox %}
+                        <a href="{{ item.image.file.url }}" class="lightbox-trigger block h-full" 
+                           data-lightbox="gallery-{{ block.get_block_id }}"
+                           data-title="{{ item.caption|default:item.alt_text|default:item.image.title }}">
+                    {% endif %}
+                    
+                    {% if value.aspect_ratio == 'auto' %}
+                        {% image item.image fill-600x400 as grid_image %}
+                    {% elif value.aspect_ratio == 'square' %}
+                        {% image item.image fill-400x400 as grid_image %}
+                    {% elif value.aspect_ratio == 'landscape' %}
+                        {% image item.image fill-400x300 as grid_image %}
+                    {% elif value.aspect_ratio == 'wide' %}
+                        {% image item.image fill-400x225 as grid_image %}
+                    {% else %}
+                        {% image item.image fill-600x400 as grid_image %}
+                    {% endif %}
+                    
+                    <img src="{{ grid_image.url }}" 
+                         alt="{{ item.alt_text|default:item.image.title }}"
+                         loading="lazy"
+                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    
+                    {% if value.enable_lightbox %}
+                        </a>
+                    {% endif %}
+                    
+                    {% if item.caption %}
+                        <div class="gallery-caption absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/75 to-transparent p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <p class="text-sm">{{ item.caption }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
+
+{# JavaScript for gallery functionality #}
+<script>
+function galleryPrev(slidesId) {
+    const slides = document.getElementById(slidesId);
+    const slideWidth = slides.children[0].offsetWidth;
+    const currentTransform = parseInt(slides.style.transform.replace('translateX(', '').replace('px)', '') || '0');
+    const newTransform = Math.min(0, currentTransform + slideWidth);
+    slides.style.transform = `translateX(${newTransform}px)`;
+}
+
+function galleryNext(slidesId) {
+    const slides = document.getElementById(slidesId);
+    const slideWidth = slides.children[0].offsetWidth;
+    const maxTransform = -(slideWidth * (slides.children.length - 1));
+    const currentTransform = parseInt(slides.style.transform.replace('translateX(', '').replace('px)', '') || '0');
+    const newTransform = Math.max(maxTransform, currentTransform - slideWidth);
+    slides.style.transform = `translateX(${newTransform}px)`;
+}
+
+function galleryGoTo(slidesId, index) {
+    const slides = document.getElementById(slidesId);
+    const slideWidth = slides.children[0].offsetWidth;
+    const newTransform = -(slideWidth * index);
+    slides.style.transform = `translateX(${newTransform}px)`;
+    
+    // Update indicators
+    const indicators = slides.parentElement.querySelectorAll('.gallery-indicators button');
+    indicators.forEach((btn, i) => {
+        btn.classList.toggle('bg-white', i === index);
+        btn.classList.toggle('bg-white/60', i !== index);
+    });
+}
+
+// Simple lightbox functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const lightboxTriggers = document.querySelectorAll('.lightbox-trigger');
+    lightboxTriggers.forEach(trigger => {
+        trigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Add your preferred lightbox library integration here
+            // For example: PhotoSwipe, Fancybox, or custom lightbox
+            console.log('Open lightbox for:', this.href);
+        });
+    });
+});
+</script>

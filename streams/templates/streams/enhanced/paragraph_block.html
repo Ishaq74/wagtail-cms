@@ -1,0 +1,17 @@
+{% load wagtailcore_tags %}
+
+{# Enhanced paragraph block template #}
+<div class="paragraph-wrapper{% if value.spacing %} mb-{{ value.spacing }}{% endif %}{% if value.animation != 'none' %} animate-{{ value.animation }}{% if value.animation_delay != '0' %} animate-delay-{{ value.animation_delay }}{% endif %}{% endif %}"
+     {% if value.aria_label %}aria-label="{{ value.aria_label }}"{% endif %}
+     id="{{ block.get_block_id }}">
+    
+    {% if value.lead %}
+        <div class="lead{% if value.color %} text-{{ value.color }}{% endif %}{% if value.alignment %} text-{{ value.alignment }}{% endif %}">
+            {{ value.text }}
+        </div>
+    {% else %}
+        <div class="prose{% if value.color %} prose-{{ value.color }}{% endif %}{% if value.alignment %} text-{{ value.alignment }}{% endif %}">
+            {{ value.text }}
+        </div>
+    {% endif %}
+</div>
