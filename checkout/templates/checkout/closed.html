@@ -1,32 +1,60 @@
 {% extends "base.html" %}
+
 {% block content %}
-<section>
-    <h1>Le Magasin est fermé.</h1>
-    <h2>Horaires d'ouverture</h2>
-    <div>
-        {% for block in opening_hours %}
-            <div>
-                <strong>
-                    {% if block.day == 'monday' %} Lundi
-                    {% elif block.day == 'tuesday' %} Mardi
-                    {% elif block.day == 'wednesday' %} Mercredi
-                    {% elif block.day == 'thursday' %} Jeudi
-                    {% elif block.day == 'friday' %} Vendredi
-                    {% elif block.day == 'saturday' %} Samedi
-                    {% elif block.day == 'sunday' %} Dimanche
-                    {% endif %}
-                    :
-                </strong>
-                {% if block.is_closed %}
-                    <span>Fermé</span>
-                {% else %}
-                    <span>{{ block.open_time }} - {{ block.close_time }}</span>
-                    {% if block.second_open_time and block.second_close_time %}
-                        | <span>{{ block.second_open_time }} - {{ block.second_close_time }}</span>
-                    {% endif %}
-                {% endif %}
+<section class="container mx-auto max-w-2xl px-4 py-8">
+    <div class="text-center">
+        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-orange-100 mb-4">
+            <svg class="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </div>
+        
+        <h1 class="text-2xl font-bold text-gray-900 mb-4">Le Magasin est fermé</h1>
+        
+        <div class="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
+            <p class="text-orange-800">{{ message }}</p>
+        </div>
+        
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+            <div class="px-4 py-5 sm:px-6">
+                <h2 class="text-lg leading-6 font-medium text-gray-900">Horaires d'ouverture</h2>
             </div>
-        {% endfor %}
+            <div class="border-t border-gray-200">
+                <dl class="divide-y divide-gray-200">
+                    {% for block in opening_hours %}
+                    <div class="px-4 py-4 sm:px-6 flex justify-between">
+                        <dt class="text-sm font-medium text-gray-900">
+                            {% if block.day == 'monday' %}Lundi
+                            {% elif block.day == 'tuesday' %}Mardi
+                            {% elif block.day == 'wednesday' %}Mercredi
+                            {% elif block.day == 'thursday' %}Jeudi
+                            {% elif block.day == 'friday' %}Vendredi
+                            {% elif block.day == 'saturday' %}Samedi
+                            {% elif block.day == 'sunday' %}Dimanche
+                            {% endif %}
+                        </dt>
+                        <dd class="text-sm text-gray-500">
+                            {% if block.is_closed %}
+                                <span class="text-red-600 font-medium">Fermé</span>
+                            {% else %}
+                                <span class="text-green-600">
+                                    {{ block.open_time }} - {{ block.close_time }}
+                                    {% if block.second_open_time and block.second_close_time %}
+                                        <br>{{ block.second_open_time }} - {{ block.second_close_time }}
+                                    {% endif %}
+                                </span>
+                            {% endif %}
+                        </dd>
+                    </div>
+                    {% endfor %}
+                </dl>
+            </div>
+        </div>
+        
+        <a href="/" 
+           class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+            Retourner à l'accueil
+        </a>
     </div>
 </section>
 {% endblock %}

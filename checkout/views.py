@@ -81,21 +81,63 @@ def checkout(request):
         payment_method = request.POST.get("payment_method", "").strip()
         delivery_option = request.POST.get("delivery_option", "").strip()
 
-        # Validation des champs requis
-        if not phone_number or not email or not payment_method or not delivery_option:
-            return render(request, 'checkout/checkout.html', {
-                'cart': cart,
-                'settings_instance': settings_instance,
-                'error_message': "Tous les champs sont requis.",
-                'opening_hours': opening_hours,
-            })
+        # Comprehensive form validation
+        errors = []
+        
+        # Required field validation
+        if not phone_number:
+            errors.append("Le numéro de téléphone est requis.")
+        elif len(phone_number) < 10:
+            errors.append("Le numéro de téléphone doit contenir au moins 10 chiffres.")
+            
+        if not email:
+            errors.append("L'adresse email est requise.")
+        elif '@' not in email or '.' not in email.split('@')[-1]:
+            errors.append("L'adresse email n'est pas valide.")
+            
+        if not payment_method:
+            errors.append("Une méthode de paiement doit être sélectionnée.")
+        elif payment_method not in ['COD', 'Stripe']:
+            errors.append("Méthode de paiement non valide.")
+            
+        if not delivery_option:
+            errors.append("Une option de livraison doit être sélectionnée.")
+        elif delivery_option not in ['delivery', 'pickup']:
+            errors.append("Option de livraison non valide.")
+            
+        # Address validation for delivery
+        if delivery_option == 'delivery':
+            if not address:
+                errors.append("L'adresse de livraison est requise pour l'option livraison.")
+            elif len(address) < 10:
+                errors.append("L'adresse de livraison doit être plus détaillée.")
+        
+        # Check if selected options are actually enabled
+        if payment_method == 'COD' and not settings_instance.enable_cod:
+            errors.append("Le paiement à la livraison n'est pas disponible.")
+        if payment_method == 'Stripe' and not settings_instance.enable_stripe:
+            errors.append("Le paiement par carte n'est pas disponible.")
+        if delivery_option == 'delivery' and not settings_instance.enable_delivery:
+            errors.append("La livraison n'est pas disponible.")
+        if delivery_option == 'pickup' and not settings_instance.enable_pickup:
+            errors.append("L'emport n'est pas disponible.")
 
-        if delivery_option == 'delivery' and not address:
+        # If there are validation errors, return with error messages
+        if errors:
+            error_message = "Veuillez corriger les erreurs suivantes :\n" + "\n".join(f"• {error}" for error in errors)
             return render(request, 'checkout/checkout.html', {
                 'cart': cart,
                 'settings_instance': settings_instance,
-                'error_message': "L'adresse de livraison est requise pour l'option livraison.",
+                'error_message': error_message,
                 'opening_hours': opening_hours,
+                # Preserve form data
+                'form_data': {
+                    'address': address,
+                    'phone_number': phone_number,
+                    'email': email,
+                    'payment_method': payment_method,
+                    'delivery_option': delivery_option,
+                }
             })
 
         # Créer la commande

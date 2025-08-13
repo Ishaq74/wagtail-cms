@@ -221,10 +221,15 @@ def create_list_block(model_class, template_prefix, category_model=None,
                 queryset = queryset.filter(categories__in=categories)
             
             return queryset.distinct()
-        
-        class Meta:
-            template = f"{template_prefix}/configurable_list.html"
-            **(meta_options or {})
+    
+    # Create Meta class dynamically after class definition
+    meta_dict = {
+        'template': f"{template_prefix}/configurable_list.html"
+    }
+    if meta_options:
+        meta_dict.update(meta_options)
+    
+    DynamicListBlock.Meta = type('Meta', (), meta_dict)
     
     return DynamicListBlock
 
@@ -330,10 +335,15 @@ def CategoryListBlock(model_class, template_prefix, meta_options=None):
                 queryset = queryset.filter(is_featured=True)
                 
             return queryset.distinct()
-        
-        class Meta:
-            template = f"{template_prefix}/category_list.html"
-            **(meta_options or {})
+    
+    # Create Meta class dynamically after class definition
+    meta_dict = {
+        'template': f"{template_prefix}/category_list.html"
+    }
+    if meta_options:
+        meta_dict.update(meta_options)
+    
+    DynamicCategoryListBlock.Meta = type('Meta', (), meta_dict)
     
     return DynamicCategoryListBlock
 

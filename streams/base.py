@@ -8,6 +8,7 @@ with standardized patterns, reusable mixins, and consistent functionality.
 from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
 from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from typing import Dict, Any, List, Optional
 import logging
 
@@ -39,22 +40,27 @@ class BaseStructBlock(blocks.StructBlock):
     
     def get_block_id(self, value):
         """Generate unique block ID."""
-        return f"{self.meta.label.lower().replace(' ', '-')}-{hash(str(value)) % 10000}"
+        label = getattr(self.meta, 'label', None) or self.__class__.__name__
+        return f"{label.lower().replace(' ', '-')}-{hash(str(value)) % 10000}"
     
     def get_css_classes(self, value):
         """Generate CSS classes based on block configuration."""
         classes = []
         
+        # Ensure value is dict-like
+        if not isinstance(value, dict):
+            return ''
+        
         # Add alignment classes
-        if hasattr(value, 'alignment') and value.get('alignment'):
+        if 'alignment' in value and value.get('alignment'):
             classes.append(f"text-{value['alignment']}")
         
         # Add color classes  
-        if hasattr(value, 'color') and value.get('color'):
+        if 'color' in value and value.get('color'):
             classes.append(f"text-{value['color']}")
             
         # Add spacing classes
-        if hasattr(value, 'spacing') and value.get('spacing'):
+        if 'spacing' in value and value.get('spacing'):
             classes.append(f"spacing-{value['spacing']}")
             
         return ' '.join(classes)
@@ -310,8 +316,6 @@ class BaseListBlock(BaseStructBlock):
     
     def get_context(self, value, parent_context=None):
         """Enhanced context with pagination support."""
-        from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-        
         context = super().get_context(value, parent_context)
         request = parent_context.get('request') if parent_context else None
         

@@ -87,7 +87,7 @@ class DesignMixinTest(TestCase):
     def test_alignment_choices(self):
         """Test alignment field choices."""
         alignment_field = self.mixin.child_blocks['alignment']
-        choices = [choice[0] for choice in alignment_field.choices]
+        choices = [choice[0] for choice in alignment_field.field.choices]
         expected_choices = ['left', 'center', 'right', 'justify']
         for choice in expected_choices:
             self.assertIn(choice, choices)
@@ -108,7 +108,7 @@ class ResponsiveImageMixinTest(TestCase):
     def test_sizes_choices(self):
         """Test sizes field choices."""
         sizes_field = self.mixin.child_blocks['sizes']
-        choices = [choice[0] for choice in sizes_field.choices]
+        choices = [choice[0] for choice in sizes_field.field.choices]
         expected_choices = ['xs', 'sm', 'md', 'lg', 'xl', 'full', 'auto']
         for choice in expected_choices:
             self.assertIn(choice, choices)
@@ -116,7 +116,7 @@ class ResponsiveImageMixinTest(TestCase):
     def test_loading_default(self):
         """Test loading field default value."""
         loading_field = self.mixin.child_blocks['loading']
-        self.assertEqual(loading_field.default, 'lazy')
+        self.assertEqual(loading_field.meta.default, 'lazy')
 
 
 class LinkMixinTest(TestCase):
@@ -184,7 +184,8 @@ class HeadingBlockTest(TestCase):
     def test_heading_level_choices(self):
         """Test heading level choices."""
         heading_level_field = self.block.child_blocks['heading_level']
-        choices = [choice[0] for choice in heading_level_field.choices]
+        # Get choices from the Django form field instead of the block
+        choices = [choice[0] for choice in heading_level_field.field.choices]
         expected_choices = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
         for choice in expected_choices:
             self.assertIn(choice, choices)
@@ -192,12 +193,12 @@ class HeadingBlockTest(TestCase):
     def test_default_heading_level(self):
         """Test default heading level."""
         heading_level_field = self.block.child_blocks['heading_level']
-        self.assertEqual(heading_level_field.default, 'h2')
+        self.assertEqual(heading_level_field.meta.default, 'h2')
     
     def test_size_choices(self):
         """Test size field choices."""
         size_field = self.block.child_blocks['size']
-        choices = [choice[0] for choice in size_field.choices]
+        choices = [choice[0] for choice in size_field.field.choices]
         self.assertIn('base', choices)
         self.assertIn('lg', choices)
         self.assertIn('xl', choices)
@@ -205,7 +206,7 @@ class HeadingBlockTest(TestCase):
     def test_font_weight_default(self):
         """Test default font weight."""
         font_weight_field = self.block.child_blocks['font_weight']
-        self.assertEqual(font_weight_field.default, 'bold')
+        self.assertEqual(font_weight_field.meta.default, 'bold')
 
 
 class ParagraphBlockTest(TestCase):
@@ -241,7 +242,7 @@ class ButtonBlockTest(TestCase):
     def test_style_choices(self):
         """Test style field choices."""
         style_field = self.block.child_blocks['style']
-        choices = [choice[0] for choice in style_field.choices]
+        choices = [choice[0] for choice in style_field.field.choices]
         expected_choices = ['primary', 'secondary', 'accent', 'outline', 'ghost', 'link']
         for choice in expected_choices:
             self.assertIn(choice, choices)
@@ -249,12 +250,12 @@ class ButtonBlockTest(TestCase):
     def test_default_style(self):
         """Test default button style."""
         style_field = self.block.child_blocks['style']
-        self.assertEqual(style_field.default, 'primary')
+        self.assertEqual(style_field.meta.default, 'primary')
     
     def test_icon_choices_includes_empty(self):
         """Test that icon choices include empty option."""
         icon_field = self.block.child_blocks['icon']
-        choices = [choice[0] for choice in icon_field.choices]
+        choices = [choice[0] for choice in icon_field.field.choices]
         self.assertIn('', choices)  # Empty option
         self.assertIn('arrow-right', choices)  # Example icon
 
@@ -279,7 +280,7 @@ class ButtonGroupBlockTest(TestCase):
     def test_layout_choices(self):
         """Test layout field choices."""
         layout_field = self.block.child_blocks['layout']
-        choices = [choice[0] for choice in layout_field.choices]
+        choices = [choice[0] for choice in layout_field.field.choices]
         expected_choices = ['horizontal', 'vertical', 'grid']
         for choice in expected_choices:
             self.assertIn(choice, choices)
@@ -287,7 +288,7 @@ class ButtonGroupBlockTest(TestCase):
     def test_default_layout(self):
         """Test default layout."""
         layout_field = self.block.child_blocks['layout']
-        self.assertEqual(layout_field.default, 'horizontal')
+        self.assertEqual(layout_field.meta.default, 'horizontal')
 
 
 class BaseListBlockTest(TestCase):
@@ -297,8 +298,12 @@ class BaseListBlockTest(TestCase):
         # Create a concrete implementation for testing
         class TestListBlock(BaseListBlock):
             def get_filtered_queryset(self, value):
-                # Mock implementation
-                return Mock(objects=Mock(live=Mock(return_value=Mock())))
+                # Mock implementation that supports slicing
+                mock_items = ['item1', 'item2', 'item3', 'item4', 'item5', 'item6']
+                mock_queryset = Mock()
+                # Make the mock support slicing
+                mock_queryset.__getitem__ = lambda self, key: mock_items[key]
+                return mock_queryset
         
         self.block = TestListBlock()
         self.request_factory = RequestFactory()
