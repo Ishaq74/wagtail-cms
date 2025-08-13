@@ -68,14 +68,12 @@ class BaseStructBlockTest(TestCase):
 
 
 class DesignMixinTest(TestCase):
-    """Test the DesignMixin functionality through a concrete block class."""
+    """Test the DesignMixin functionality through HeadingBlock (which uses BaseContentBlock)."""
     
     def setUp(self):
-        # Create a concrete block that uses DesignMixin
-        class TestDesignBlock(BaseContentBlock):
-            test_field = blocks.CharBlock(required=False)
-        
-        self.block = TestDesignBlock()
+        # Use HeadingBlock which inherits from BaseContentBlock (which includes DesignMixin)
+        from streams.enhanced_blocks import HeadingBlock
+        self.block = HeadingBlock()
     
     def test_has_alignment_field(self):
         """Test that alignment field exists."""
@@ -92,7 +90,7 @@ class DesignMixinTest(TestCase):
     def test_alignment_choices(self):
         """Test alignment field choices."""
         alignment_field = self.block.child_blocks['alignment']
-        choices = [choice[0] for choice in alignment_field.choices]
+        choices = [choice[0] for choice in alignment_field.field.choices]
         expected_choices = ['left', 'center', 'right', 'justify']
         for choice in expected_choices:
             self.assertIn(choice, choices)
