@@ -1,9 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section>
-<h1>Erreur de Paiement</h1>
-<p>{{ error_message }}</p>
-<a href="{% url 'checkout:checkout' %}" class="btn btn-primary">Retourner au checkout</a>
+<section class="container mx-auto max-w-2xl px-4 py-8">
+    <div class="text-center">
+        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+            <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+            </svg>
+        </div>
+        
+        <h1 class="text-2xl font-bold text-gray-900 mb-4">Erreur de Paiement</h1>
+        
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <p class="text-red-800">{{ error_message }}</p>
+        </div>
+        
+        <div class="space-y-3">
+            <a href="{% url 'checkout:checkout' %}" 
+               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                Retourner au checkout
+            </a>
+            
+            <p class="text-sm text-gray-600">
+                Si le problème persiste, veuillez contacter notre service client.
+            </p>
+        </div>
+    </div>
 </section>
 {% endblock %}

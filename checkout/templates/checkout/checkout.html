@@ -1,63 +1,186 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section>
-<h1>Passer à la caisse</h1>
+<section class="container mx-auto max-w-2xl px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Passer à la caisse</h1>
 
-<form method="post">
-    {% csrf_token %}
-    <div>
-        <label for="delivery_option">Option de livraison</label>
-        <select name="delivery_option" id="delivery_option" required onchange="toggleAddressField()">
-            {% if settings_instance.enable_delivery %}
-                <option value="delivery">Livraison</option>
-            {% endif %}
-            {% if settings_instance.enable_pickup %}
-                <option value="pickup">Emport</option>
-            {% endif %}
-        </select>
-    </div>
+    {% if error_message %}
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6" role="alert" aria-live="polite">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium">Erreur de validation</h3>
+                    <div class="mt-2 text-sm whitespace-pre-line">{{ error_message }}</div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 
-    <div id="address_field">
-        <label for="address">Adresse</label>
-        <input type="text" name="address" id="address">
-    </div>
+    <form method="post" class="space-y-6" id="checkout-form" novalidate>
+        {% csrf_token %}
+        
+        <div class="space-y-4">
+            <div>
+                <label for="delivery_option" class="block text-sm font-medium text-gray-700 mb-2">
+                    Option de livraison <span class="text-red-500" aria-label="requis">*</span>
+                </label>
+                <select name="delivery_option" 
+                        id="delivery_option" 
+                        required 
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                        onchange="toggleAddressField()"
+                        aria-describedby="delivery_option_help">
+                    {% if settings_instance.enable_delivery %}
+                        <option value="delivery" {% if form_data.delivery_option == 'delivery' %}selected{% endif %}>Livraison</option>
+                    {% endif %}
+                    {% if settings_instance.enable_pickup %}
+                        <option value="pickup" {% if form_data.delivery_option == 'pickup' %}selected{% endif %}>Emport</option>
+                    {% endif %}
+                </select>
+                <p id="delivery_option_help" class="mt-1 text-sm text-gray-500">Sélectionnez votre mode de récupération de commande.</p>
+            </div>
 
-    <div>
-        <label for="phone_number">Numéro de téléphone</label>
-        <input type="text" name="phone_number" required>
-    </div>
-    <div>
-        <label for="email">Email</label>
-        <input type="email" name="email" value="{{ user.email }}" required>
-    </div>
+            <div id="address_field" class="transition-all duration-300">
+                <label for="address" class="block text-sm font-medium text-gray-700 mb-2">
+                    Adresse de livraison <span class="text-red-500" aria-label="requis">*</span>
+                </label>
+                <input type="text" 
+                       name="address" 
+                       id="address"
+                       value="{{ form_data.address|default:'' }}"
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                       placeholder="Entrez votre adresse complète"
+                       aria-describedby="address_help">
+                <p id="address_help" class="mt-1 text-sm text-gray-500">Adresse complète pour la livraison.</p>
+            </div>
 
-    <div>
-        <label for="payment_method">Méthode de paiement</label>
-        <select name="payment_method" required>
-            {% if settings_instance.enable_cod %}
-                <option value="COD">Paiement à la livraison</option>
-            {% endif %}
-            {% if settings_instance.enable_stripe %}
-                <option value="Stripe">Carte bancaire</option>
-            {% endif %}
-        </select>
-    </div>
+            <div>
+                <label for="phone_number" class="block text-sm font-medium text-gray-700 mb-2">
+                    Numéro de téléphone <span class="text-red-500" aria-label="requis">*</span>
+                </label>
+                <input type="tel" 
+                       name="phone_number" 
+                       id="phone_number"
+                       value="{{ form_data.phone_number|default:'' }}"
+                       required
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                       placeholder="+33 1 23 45 67 89"
+                       aria-describedby="phone_help">
+                <p id="phone_help" class="mt-1 text-sm text-gray-500">Numéro pour vous contacter concernant votre commande.</p>
+            </div>
+            
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                    Email <span class="text-red-500" aria-label="requis">*</span>
+                </label>
+                <input type="email" 
+                       name="email" 
+                       id="email"
+                       value="{{ form_data.email|default:user.email }}" 
+                       required
+                       class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                       placeholder="votre@email.com"
+                       aria-describedby="email_help">
+                <p id="email_help" class="mt-1 text-sm text-gray-500">Email pour recevoir la confirmation de commande.</p>
+            </div>
 
-    <button type="submit">Confirmer la commande</button>
-</form>
+            <div>
+                <label for="payment_method" class="block text-sm font-medium text-gray-700 mb-2">
+                    Méthode de paiement <span class="text-red-500" aria-label="requis">*</span>
+                </label>
+                <select name="payment_method" 
+                        id="payment_method"
+                        required
+                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                        aria-describedby="payment_method_help">
+                    {% if settings_instance.enable_cod %}
+                        <option value="COD" {% if form_data.payment_method == 'COD' %}selected{% endif %}>Paiement à la livraison</option>
+                    {% endif %}
+                    {% if settings_instance.enable_stripe %}
+                        <option value="Stripe" {% if form_data.payment_method == 'Stripe' %}selected{% endif %}>Carte bancaire</option>
+                    {% endif %}
+                </select>
+                <p id="payment_method_help" class="mt-1 text-sm text-gray-500">Choisissez votre mode de paiement préféré.</p>
+            </div>
+        </div>
 
-{% if error_message %}
-    <div class="error">{{ error_message }}</div>
-{% endif %}
+        <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+            <a href="{% url 'cart:cart_detail' %}" 
+               class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                ← Retourner au panier
+            </a>
+            
+            <button type="submit" 
+                    id="submit-button"
+                    class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                <span id="submit-text">Confirmer la commande</span>
+                <svg id="loading-spinner" class="hidden animate-spin -mr-1 ml-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </button>
+        </div>
+    </form>
 </section>
+
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('checkout-form');
+    const deliveryOption = document.getElementById('delivery_option');
+    const addressField = document.getElementById('address_field');
+    const addressInput = document.getElementById('address');
+    const submitButton = document.getElementById('submit-button');
+    const submitText = document.getElementById('submit-text');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    
+    // Address field toggle with smooth animation
     function toggleAddressField() {
-        var deliveryOption = document.getElementById('delivery_option').value;
-        var addressField = document.getElementById('address_field');
-        addressField.style.display = (deliveryOption === 'pickup') ? 'none' : 'block';
+        const isPickup = deliveryOption.value === 'pickup';
+        
+        if (isPickup) {
+            addressField.style.display = 'none';
+            addressInput.removeAttribute('required');
+            addressInput.setAttribute('aria-hidden', 'true');
+        } else {
+            addressField.style.display = 'block';
+            addressInput.setAttribute('required', '');
+            addressInput.removeAttribute('aria-hidden');
+        }
     }
-    // Initialisation au chargement de la page
-    window.onload = toggleAddressField;
+    
+    // Initialize on page load
+    toggleAddressField();
+    
+    // Handle delivery option change
+    deliveryOption.addEventListener('change', toggleAddressField);
+    
+    // Form submission with loading state
+    form.addEventListener('submit', function() {
+        submitButton.disabled = true;
+        submitText.textContent = 'Traitement en cours...';
+        loadingSpinner.classList.remove('hidden');
+    });
+    
+    // Basic client-side validation feedback
+    const requiredFields = form.querySelectorAll('input[required], select[required]');
+    requiredFields.forEach(field => {
+        field.addEventListener('invalid', function(e) {
+            e.preventDefault();
+            field.classList.add('border-red-300', 'focus:border-red-500', 'focus:ring-red-500');
+            field.classList.remove('border-gray-300', 'focus:border-primary-500', 'focus:ring-primary-500');
+        });
+        
+        field.addEventListener('input', function() {
+            if (field.validity.valid) {
+                field.classList.remove('border-red-300', 'focus:border-red-500', 'focus:ring-red-500');
+                field.classList.add('border-gray-300', 'focus:border-primary-500', 'focus:ring-primary-500');
+            }
+        });
+    });
+});
 </script>
 {% endblock %}
