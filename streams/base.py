@@ -14,6 +14,31 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+# Design system constants
+ALIGNMENT_CHOICES = [
+    ('left', 'Left'),
+    ('center', 'Center'),
+    ('right', 'Right'),
+    ('justify', 'Justify')
+]
+
+COLOR_CHOICES = [
+    ('primary', 'Primary'),
+    ('secondary', 'Secondary'),
+    ('accent', 'Accent'),
+    ('neutral', 'Neutral'),
+    ('base', 'Base'),
+]
+
+SPACING_CHOICES = [
+    ('none', 'None'),
+    ('sm', 'Small'),
+    ('md', 'Medium'),
+    ('lg', 'Large'),
+    ('xl', 'Extra Large'),
+]
+
+
 class BaseStructBlock(blocks.StructBlock):
     """Enhanced base class for all custom struct blocks with common functionality."""
     
@@ -39,22 +64,23 @@ class BaseStructBlock(blocks.StructBlock):
     
     def get_block_id(self, value):
         """Generate unique block ID."""
-        return f"{self.meta.label.lower().replace(' ', '-')}-{hash(str(value)) % 10000}"
+        label = getattr(self.meta, 'label', None) or self.__class__.__name__
+        return f"{label.lower().replace(' ', '-')}-{hash(str(value)) % 10000}"
     
     def get_css_classes(self, value):
         """Generate CSS classes based on block configuration."""
         classes = []
         
         # Add alignment classes
-        if hasattr(value, 'alignment') and value.get('alignment'):
+        if 'alignment' in value and value.get('alignment'):
             classes.append(f"text-{value['alignment']}")
         
         # Add color classes  
-        if hasattr(value, 'color') and value.get('color'):
+        if 'color' in value and value.get('color'):
             classes.append(f"text-{value['color']}")
             
         # Add spacing classes
-        if hasattr(value, 'spacing') and value.get('spacing'):
+        if 'spacing' in value and value.get('spacing'):
             classes.append(f"spacing-{value['spacing']}")
             
         return ' '.join(classes)
@@ -75,6 +101,7 @@ class DesignMixin(blocks.StructBlock):
             ('justify', 'Justify')
         ], 
         default='left', 
+        required=False,
         help_text="Text alignment"
     )
     
@@ -91,6 +118,7 @@ class DesignMixin(blocks.StructBlock):
             ('error', 'Error')
         ], 
         default='base',
+        required=False,
         help_text="Text color from design system"
     )
     
@@ -105,8 +133,12 @@ class DesignMixin(blocks.StructBlock):
             ('2xl', 'Double Extra Large')
         ], 
         default='md',
+        required=False,
         help_text="Spacing around the element"
     )
+    
+    class Meta:
+        abstract = True
 
 
 class ResponsiveImageMixin(blocks.StructBlock):
@@ -273,19 +305,34 @@ class LinkMixin(blocks.StructBlock):
         return attrs
 
 
-class BaseContentBlock(BaseStructBlock, DesignMixin, AccessibilityMixin, AnimationMixin):
-    """Base class for content blocks with all common mixins."""
+class BaseContentBlock(BaseStructBlock):
+    """Base class for content blocks with common design fields."""
+    
+    # Design-related fields (simplified from mixins due to inheritance issues)
+    alignment = blocks.ChoiceBlock(
+        choices=ALIGNMENT_CHOICES, 
+        default='left', 
+        required=False,
+        help_text="Text alignment"
+    )
+    
+    color = blocks.ChoiceBlock(
+        choices=COLOR_CHOICES, 
+        default='base',
+        required=False,
+        help_text="Text color from design system"
+    )
+    
+    spacing = blocks.ChoiceBlock(
+        choices=SPACING_CHOICES, 
+        default='md',
+        required=False,
+        help_text="Spacing around the element"
+    )
     
     def get_css_classes(self, value):
         """Enhanced CSS class generation."""
         classes = super().get_css_classes(value)
-        
-        # Add animation classes
-        if value.get('animation', 'none') != 'none':
-            classes += f" animate-{value['animation']}"
-            if value.get('animation_delay', '0') != '0':
-                classes += f" animate-delay-{value['animation_delay']}"
-        
         return classes.strip()
 
 

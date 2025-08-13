@@ -5,6 +5,7 @@ Tests for the enhanced streamfield system.
 from django.test import TestCase, RequestFactory
 from wagtail.test.utils import WagtailTestUtils
 from wagtail.models import Page
+from wagtail import blocks
 from unittest.mock import Mock, patch
 
 from streams.base import (
@@ -67,47 +68,55 @@ class BaseStructBlockTest(TestCase):
 
 
 class DesignMixinTest(TestCase):
-    """Test the DesignMixin functionality."""
+    """Test the DesignMixin functionality through HeadingBlock (which uses BaseContentBlock)."""
     
     def setUp(self):
-        self.mixin = DesignMixin()
+        # Use HeadingBlock which inherits from BaseContentBlock (which includes DesignMixin)
+        from streams.enhanced_blocks import HeadingBlock
+        self.block = HeadingBlock()
     
     def test_has_alignment_field(self):
         """Test that alignment field exists."""
-        self.assertIn('alignment', self.mixin.child_blocks)
+        self.assertIn('alignment', self.block.child_blocks)
     
     def test_has_color_field(self):
         """Test that color field exists."""
-        self.assertIn('color', self.mixin.child_blocks)
+        self.assertIn('color', self.block.child_blocks)
     
     def test_has_spacing_field(self):
         """Test that spacing field exists."""
-        self.assertIn('spacing', self.mixin.child_blocks)
+        self.assertIn('spacing', self.block.child_blocks)
     
     def test_alignment_choices(self):
         """Test alignment field choices."""
-        alignment_field = self.mixin.child_blocks['alignment']
-        choices = [choice[0] for choice in alignment_field.choices]
+        alignment_field = self.block.child_blocks['alignment']
+        choices = [choice[0] for choice in alignment_field.field.choices]
         expected_choices = ['left', 'center', 'right', 'justify']
         for choice in expected_choices:
             self.assertIn(choice, choices)
 
 
 class ResponsiveImageMixinTest(TestCase):
-    """Test the ResponsiveImageMixin functionality."""
+    """Test the ResponsiveImageMixin functionality through a concrete block class."""
     
     def setUp(self):
-        self.mixin = ResponsiveImageMixin()
+        # Create a concrete block that uses ResponsiveImageMixin
+        from .base import BaseStructBlock, ResponsiveImageMixin
+        
+        class TestImageBlock(BaseStructBlock, ResponsiveImageMixin):
+            test_field = blocks.CharBlock(required=False)
+        
+        self.block = TestImageBlock()
     
     def test_has_required_fields(self):
         """Test that all required fields exist."""
         required_fields = ['image', 'alt_text', 'sizes', 'aspect_ratio', 'loading']
         for field in required_fields:
-            self.assertIn(field, self.mixin.child_blocks)
+            self.assertIn(field, self.block.child_blocks)
     
     def test_sizes_choices(self):
         """Test sizes field choices."""
-        sizes_field = self.mixin.child_blocks['sizes']
+        sizes_field = self.block.child_blocks['sizes']
         choices = [choice[0] for choice in sizes_field.choices]
         expected_choices = ['xs', 'sm', 'md', 'lg', 'xl', 'full', 'auto']
         for choice in expected_choices:
@@ -115,7 +124,7 @@ class ResponsiveImageMixinTest(TestCase):
     
     def test_loading_default(self):
         """Test loading field default value."""
-        loading_field = self.mixin.child_blocks['loading']
+        loading_field = self.block.child_blocks['loading']
         self.assertEqual(loading_field.default, 'lazy')
 
 
