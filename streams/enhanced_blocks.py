@@ -21,8 +21,90 @@ from .base import (
 )
 
 
-class HeadingBlock(BaseContentBlock):
+class HeadingBlock(blocks.StructBlock):
     """Enhanced heading block with improved typography options."""
+    
+    # Fields from mixins manually included to avoid inheritance conflicts
+    alignment = blocks.ChoiceBlock(
+        choices=[
+            ('left', 'Left'),
+            ('center', 'Center'),
+            ('right', 'Right'),
+            ('justify', 'Justify')
+        ], 
+        default='left', 
+        help_text="Text alignment"
+    )
+    
+    color = blocks.ChoiceBlock(
+        choices=[
+            ('primary', 'Primary'),
+            ('secondary', 'Secondary'), 
+            ('accent', 'Accent'),
+            ('neutral', 'Neutral'),
+            ('success', 'Success'),
+            ('warning', 'Warning'),
+            ('error', 'Error'),
+            ('info', 'Info')
+        ], 
+        default='primary',
+        help_text="Color scheme"
+    )
+    
+    spacing = blocks.ChoiceBlock(
+        choices=[
+            ('xs', 'Extra Small'),
+            ('sm', 'Small'),
+            ('md', 'Medium'),
+            ('lg', 'Large'),
+            ('xl', 'Extra Large'),
+            ('2xl', 'Double Extra Large')
+        ], 
+        default='md',
+        help_text="Spacing around the element"
+    )
+    
+    aria_label = blocks.CharBlock(
+        required=False,
+        blank=True,
+        max_length=100,
+        help_text="ARIA label for screen readers"
+    )
+    
+    tab_index = blocks.IntegerBlock(
+        required=False,
+        blank=True,
+        help_text="Tab order (leave empty for default)"
+    )
+    
+    animation = blocks.ChoiceBlock(
+        choices=[
+            ('none', 'No Animation'),
+            ('fade-in', 'Fade In'),
+            ('slide-up', 'Slide Up'),
+            ('slide-down', 'Slide Down'),
+            ('slide-left', 'Slide Left'),
+            ('slide-right', 'Slide Right'),
+            ('zoom-in', 'Zoom In'),
+            ('bounce', 'Bounce')
+        ],
+        default='none',
+        help_text="Animation effect when element comes into view"
+    )
+    
+    animation_delay = blocks.ChoiceBlock(
+        choices=[
+            ('0', 'No Delay'),
+            ('100', '100ms'),
+            ('200', '200ms'),
+            ('300', '300ms'),
+            ('500', '500ms'),
+            ('750', '750ms'),
+            ('1000', '1s')
+        ],
+        default='0',
+        help_text="Animation delay"
+    )
     
     heading_text = blocks.CharBlock(
         required=True, 
@@ -76,6 +158,173 @@ class HeadingBlock(BaseContentBlock):
         template = "streams/enhanced/heading_block.html"
         icon = "title"
         label = "Heading"
+    
+    def get_css_classes(self, value):
+        """Generate CSS classes based on block configuration."""
+        classes = []
+        
+        # Ensure value is dict-like
+        if not isinstance(value, dict):
+            return ''
+        
+        # Add alignment classes
+        if 'alignment' in value and value.get('alignment'):
+            classes.append(f"text-{value['alignment']}")
+        
+        # Add color classes  
+        if 'color' in value and value.get('color'):
+            classes.append(f"text-{value['color']}")
+            
+        # Add spacing classes
+        if 'spacing' in value and value.get('spacing'):
+            classes.append(f"spacing-{value['spacing']}")
+            
+        # Add animation classes
+        if value.get('animation', 'none') != 'none':
+            classes.append(f"animate-{value['animation']}")
+            if value.get('animation_delay', '0') != '0':
+                classes.append(f"animate-delay-{value['animation_delay']}")
+            
+        return ' '.join(classes)
+
+
+class ParagraphBlock(blocks.StructBlock):
+    """Enhanced paragraph block with rich formatting options."""
+    
+    text = blocks.RichTextBlock(
+        required=True,
+        help_text="Paragraph content"
+    )
+    
+    class Meta:
+        template = "streams/enhanced/paragraph_block.html"
+        icon = "pilcrow"
+        label = "Paragraph"
+
+
+class ImageBlock(blocks.StructBlock):
+    """Enhanced image block with responsive options."""
+    
+    image = ImageChooserBlock(
+        required=True,
+        help_text="Select an image"
+    )
+    
+    alt_text = blocks.CharBlock(
+        required=False,
+        max_length=255,
+        help_text="Alternative text for accessibility"
+    )
+    
+    caption = blocks.CharBlock(
+        required=False,
+        max_length=255,
+        help_text="Image caption"
+    )
+    
+    class Meta:
+        template = "streams/enhanced/image_block.html"
+        icon = "image"
+        label = "Image"
+
+
+class ButtonBlock(blocks.StructBlock):
+    """Enhanced button block with design system integration."""
+    
+    text = blocks.CharBlock(
+        required=True,
+        max_length=50,
+        help_text="Button text"
+    )
+    
+    link = blocks.URLBlock(
+        required=False,
+        help_text="External link URL"
+    )
+    
+    page = blocks.PageChooserBlock(
+        required=False,
+        help_text="Internal page link"
+    )
+    
+    style = blocks.ChoiceBlock(
+        choices=[
+            ('primary', 'Primary'),
+            ('secondary', 'Secondary'),
+            ('accent', 'Accent'),
+            ('outline', 'Outline'),
+            ('ghost', 'Ghost'),
+            ('link', 'Link Style')
+        ],
+        default='primary',
+        help_text="Button style"
+    )
+    
+    size = blocks.ChoiceBlock(
+        choices=[
+            ('xs', 'Extra Small'),
+            ('sm', 'Small'),
+            ('md', 'Medium'),
+            ('lg', 'Large'),
+            ('xl', 'Extra Large')
+        ],
+        default='md',
+        help_text="Button size"
+    )
+    
+    icon = blocks.ChoiceBlock(
+        choices=[
+            ('', 'No Icon'),
+            ('arrow-right', 'Arrow Right'),
+            ('arrow-left', 'Arrow Left'),
+            ('download', 'Download'),
+            ('external-link', 'External Link'),
+            ('mail', 'Email'),
+            ('phone', 'Phone')
+        ],
+        default='',
+        required=False,
+        help_text="Optional icon"
+    )
+    
+    class Meta:
+        template = "streams/enhanced/button_block.html"
+        icon = "pick"
+        label = "Button"
+
+
+class ButtonGroupBlock(blocks.StructBlock):
+    """Enhanced button group block for multiple buttons."""
+    
+    buttons = blocks.ListBlock(
+        ButtonBlock(),
+        help_text="Add multiple buttons"
+    )
+    
+    layout = blocks.ChoiceBlock(
+        choices=[
+            ('horizontal', 'Horizontal'),
+            ('vertical', 'Vertical'),
+            ('grid', 'Grid')
+        ],
+        default='horizontal',
+        help_text="Button group layout"
+    )
+    
+    alignment = blocks.ChoiceBlock(
+        choices=[
+            ('left', 'Left'),
+            ('center', 'Center'),
+            ('right', 'Right')
+        ],
+        default='left',
+        help_text="Group alignment"
+    )
+    
+    class Meta:
+        template = "streams/enhanced/button_group_block.html"
+        icon = "group"
+        label = "Button Group"
 
 
 class ParagraphBlock(BaseContentBlock):
