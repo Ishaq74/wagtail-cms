@@ -46,15 +46,15 @@ class BaseStructBlock(blocks.StructBlock):
         classes = []
         
         # Add alignment classes
-        if hasattr(value, 'alignment') and value.get('alignment'):
+        if 'alignment' in value and value.get('alignment'):
             classes.append(f"text-{value['alignment']}")
         
         # Add color classes  
-        if hasattr(value, 'color') and value.get('color'):
+        if 'color' in value and value.get('color'):
             classes.append(f"text-{value['color']}")
             
         # Add spacing classes
-        if hasattr(value, 'spacing') and value.get('spacing'):
+        if 'spacing' in value and value.get('spacing'):
             classes.append(f"spacing-{value['spacing']}")
             
         return ' '.join(classes)
